@@ -23,7 +23,7 @@ public class Vaga {
     @Enumerated(EnumType.STRING)
     private VeiculoTipo veiculoTipo;
 
-    private boolean disponibilidade;
+    private Boolean disponibilidade;
 
 
     public Vaga(VagaCreateDto dados) {
@@ -32,7 +32,7 @@ public class Vaga {
         this.disponibilidade = true;
     }
 
-    public void atualizar(VagaListDto dados) {
+    public void atualizar(VagaDto dados) {
         this.disponibilidade = false;
     }
 }

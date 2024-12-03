@@ -34,10 +34,4 @@ public class PagamentoController {
         return ResponseEntity.ok(pagamentos);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity detalharPagamento(@PathVariable Long id) {
-        var pagamento = repository.getReferenceById(id);
-        return ResponseEntity.ok(new PagamentoDto(pagamento));
-    }
-
 }

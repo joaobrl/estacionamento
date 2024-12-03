@@ -26,7 +26,7 @@
 
 ### **Entidades**
 1. **Veículo**: Representa os diferentes tipos de veículos que podem utilizar o estacionamento.  
-   - **Atributos**: `id`, `tipo`, `placa`, `modelo`, `marca`
+   - **Atributos**: `id`, `tipo`, `placa`, `modelo`, `marca`, `planoMensal`
 2. **Estacionamento**: Representa o estacionamento em si.  
    - **Atributos**: `id`, `nome`, `endereço`, `capacidade`
 3. **Vaga**: Representa uma vaga específica no estacionamento.  
@@ -56,13 +56,57 @@
     "tipo": "carro",
     "placa": "ABC1234",
     "modelo": "Gol",
-    "marca": "Volkswagen"
+    "marca": "Volkswagen",
+    "planoMensal": "false"
   }
   ```
 - **Obter Veículo**:  
   `GET /api/veiculos/{id}`
-
 ### **Estacionamento**
+- **Registrar Estacionamento**:  
+  `POST /api/estacionamentos`  
+  **Corpo**:
+  ```json
+  {
+    "nome": "Estacionamento do Zé",
+    "endereço": {
+        "rua": "Rua das Flores",
+        "numero": 123,
+        "bairro": "Centro",
+        "cidade": "São Paulo",
+        "estado": "SP",
+        "cep": "12345-678"},
+    "capacidade": 100
+  }
+  ```
+- **Listar Estacionamentos**:  
+  `GET /api/estacionamentos/listar`
+
+
+- **Detalhar Estacionamento**:  
+  `GET /api/estacionamentos/{id}
+
+
+- **Atualizar Estacionamento**:  
+  `POST /api/atualizar`
+
+  **Corpo**:
+  ```json
+  {
+    "id": "1",
+    "nome": "Estacionamento do Zé",
+    "endereço": {
+        "rua": "Rua das Flores",
+        "numero": 123,
+        "bairro": "Centro",
+        "cidade": "São Paulo",
+        "estado": "SP",
+        "cep": "12345-678"},
+    "capacidade": 100
+  }
+  ```
+---
+### **Vaga**
 - **Adicionar Vaga**:  
   `POST /api/estacionamentos/{id}/vagas`  
   **Corpo**:  
@@ -84,12 +128,17 @@
   {
     "veiculoId": 1,
     "vagaId": 1,
-    "horaEntrada": "2024-11-21T16:00:00"
+
   }
   ```
+- **Obter Ticket**:  
+  `GET /api/tickets/{id}`  
+
+
 - **Fechar Ticket**:  
-  `PUT /api/tickets/{id}/saida`  
-  **Corpo**:  
+  `PUT /api/tickets/saida`  
+  
+- **Corpo**:  
   ```json
   {
     "horaSaida": "2024-11-21T20:00:00"
@@ -108,7 +157,8 @@
     "metodoPagamento": "cartão"
   }
   ```
-
+- **Listar todos pagamentos**:  
+  `GET /api/tickets/{id}`
 ---
 
 ## 5. Regras de Negócios

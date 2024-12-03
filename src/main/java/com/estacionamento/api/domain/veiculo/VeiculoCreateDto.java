@@ -11,6 +11,8 @@ public record VeiculoCreateDto(
         @NotBlank
         String marca,
         @NotNull
-        VeiculoTipo veiculoTipo
+        VeiculoTipo veiculoTipo,
+        @NotNull
+        Boolean planoMensal
 ) {
 }

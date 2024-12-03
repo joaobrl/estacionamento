@@ -5,8 +5,16 @@ public record VeiculoListDto(
         VeiculoTipo veiculoTipo,
         String placa,
         String modelo,
-        String marca) {
+        String marca,
+        Boolean planoMensal)
+{
     public VeiculoListDto(Veiculo veiculo) {
-        this(veiculo.getId(), veiculo.getVeiculoTipo(), veiculo.getPlaca(), veiculo.getModelo(), veiculo.getMarca());
+        this(
+                veiculo.getId(),
+                veiculo.getVeiculoTipo(),
+                veiculo.getPlaca(),
+                veiculo.getModelo(),
+                veiculo.getMarca(),
+                veiculo.getPlanoMensal());
     }
 }

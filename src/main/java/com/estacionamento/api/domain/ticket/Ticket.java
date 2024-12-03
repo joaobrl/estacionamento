@@ -34,7 +34,7 @@ public class Ticket {
     private Vaga vaga;
 
     @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
-    private LocalDateTime horaEntrada;
+    private LocalDateTime horaEntrada = LocalDateTime.now();
 
     @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
     private LocalDateTime horaSaida;

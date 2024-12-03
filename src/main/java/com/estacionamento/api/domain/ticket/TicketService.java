@@ -1,8 +1,7 @@
 package com.estacionamento.api.domain.ticket;
 
 import com.estacionamento.api.domain.pagamento.PagamentoService;
-import com.estacionamento.api.domain.vaga.Vaga;
-import com.estacionamento.api.domain.vaga.VagaListDto;
+import com.estacionamento.api.domain.vaga.VagaDto;
 import com.estacionamento.api.domain.vaga.VagaRepository;
 import com.estacionamento.api.domain.veiculo.VeiculoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,13 +27,13 @@ public class TicketService {
         var vaga = vagaRepository.findById(ticketCreateDto.vagaId())
                 .orElseThrow(() -> new RuntimeException("Nenhuma vaga disponível para este tipo de veículo"));
 
-        if (veiculo.getVeiculoTipo().equals(vaga.getVeiculoTipo()) && vaga.isDisponibilidade()) {
+        if (veiculo.getVeiculoTipo().equals(vaga.getVeiculoTipo()) && vaga.getDisponibilidade()) {
             Ticket novoTicket = new Ticket();
             novoTicket.setVeiculo(veiculo);
             novoTicket.setVaga(vaga);
             novoTicket.setHoraEntrada(ticketCreateDto.horaEntrada());
 
-            vaga.atualizar(new VagaListDto(vaga));
+            vaga.atualizar(new VagaDto(vaga));
             vagaRepository.save(vaga);
 
             return ticketRepository.save(novoTicket);
@@ -47,10 +46,14 @@ public class TicketService {
         var ticket = ticketRepository.findById(ticketUpdateDto.id())
                 .orElseThrow(() -> new RuntimeException("Ticket não encontrado"));
 
-        ticket.atualizar(ticketUpdateDto);
-        var valor = pagamentoService.calcularValorPagamento(ticket.getId());
-        ticket.setValor(valor);
-        return ticketRepository.save(ticket);
+        if (ticket.getHoraSaida().isAfter(ticket.getHoraEntrada()) ){
+            ticket.atualizar(ticketUpdateDto);
+            var valor = pagamentoService.calcularValorPagamento(ticket.getId());
+            ticket.setValor(valor);
+            return ticketRepository.save(ticket);
+        } else {
+            throw new RuntimeException("Ticket já fechado");
+        }
 
     }
 }

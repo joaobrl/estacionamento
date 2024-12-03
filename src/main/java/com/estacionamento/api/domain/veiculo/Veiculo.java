@@ -24,10 +24,13 @@ public class Veiculo {
 
     private String marca;
 
+    private Boolean planoMensal;
+
     public Veiculo(VeiculoCreateDto veiculoCreateDto) {
         this.veiculoTipo = veiculoCreateDto.veiculoTipo();
         this.placa = veiculoCreateDto.placa();
         this.modelo = veiculoCreateDto.modelo();
         this.marca = veiculoCreateDto.marca();
+        this.planoMensal = veiculoCreateDto.planoMensal();
     }
 }

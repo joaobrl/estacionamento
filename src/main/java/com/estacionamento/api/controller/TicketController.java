@@ -19,7 +19,7 @@ public class TicketController {
 
     @PostMapping
     @Transactional
-    public ResponseEntity cadastrar (@RequestBody @Valid TicketCreateDto dados, UriComponentsBuilder uriBuilder) {
+    public ResponseEntity abrirTicket (@RequestBody @Valid TicketCreateDto dados, UriComponentsBuilder uriBuilder) {
         var ticket = ticketService.criarTicket(dados);
         var uri = uriBuilder.path("/tickets/{id}").buildAndExpand(ticket.getId()).toUri();
         return ResponseEntity.created(uri).build();
@@ -31,9 +31,9 @@ public class TicketController {
         return ResponseEntity.ok(new TicketListDto(ticket));
     }
 
-    @PutMapping
+    @PutMapping("/saida")
     @Transactional
-    public ResponseEntity atualizar (@RequestBody @Valid TicketUpdateDto dados) {
+    public ResponseEntity fecharTicket (@RequestBody @Valid TicketUpdateDto dados) {
         var ticket = ticketService.fecharTicket(dados);
         return ResponseEntity.ok(new TicketListDto(ticket));
     }

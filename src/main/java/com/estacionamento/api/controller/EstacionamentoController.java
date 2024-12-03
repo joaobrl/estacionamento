@@ -39,7 +39,7 @@ public class EstacionamentoController {
         return ResponseEntity.ok(new EstacionamentoListDto(estacionamento));
     }
 
-    @PutMapping
+    @PutMapping("/atualizar")
     @Transactional
     public ResponseEntity atualizar(@RequestBody @Valid EstacionamentoUpdateDto dados) {
         var estacionamento = repository.getReferenceById(dados.id());

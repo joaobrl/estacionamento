@@ -1,7 +1,7 @@
 package com.estacionamento.api.controller;
 
 import com.estacionamento.api.domain.vaga.VagaCreateDto;
-import com.estacionamento.api.domain.vaga.VagaListDto;
+import com.estacionamento.api.domain.vaga.VagaDto;
 import com.estacionamento.api.domain.vaga.Vaga;
 import com.estacionamento.api.domain.vaga.VagaRepository;
 import jakarta.transaction.Transactional;
@@ -30,14 +30,14 @@ public class VagaController {
     @GetMapping("/{id}")
     public ResponseEntity buscarPorId(@PathVariable Long id) {
         var vaga = repository.getReferenceById(id);
-        return ResponseEntity.ok(new VagaListDto(vaga));
+        return ResponseEntity.ok(new VagaDto(vaga));
     }
 
     @PutMapping("/atualizar")
     @Transactional
-    public ResponseEntity atualizar(@RequestBody @Valid VagaListDto dados) {
+    public ResponseEntity atualizar(@RequestBody @Valid VagaDto dados) {
         var vaga = repository.getReferenceById(dados.id());
         vaga.atualizar(dados);
-        return ResponseEntity.ok(new VagaListDto(vaga));
+        return ResponseEntity.ok(new VagaDto(vaga));
     }
 }
