@@ -17,17 +17,20 @@ public class Veiculo {
 
     @Enumerated(EnumType.STRING)
     private VeiculoTipo veiculoTipo;
-
+    @Column(name = "placa", unique = true)
     private String placa;
 
     private String modelo;
 
     private String marca;
 
+    private Boolean planoMensal;
+
     public Veiculo(VeiculoCreateDto veiculoCreateDto) {
         this.veiculoTipo = veiculoCreateDto.veiculoTipo();
         this.placa = veiculoCreateDto.placa();
         this.modelo = veiculoCreateDto.modelo();
         this.marca = veiculoCreateDto.marca();
+        this.planoMensal = veiculoCreateDto.planoMensal();
     }
 }

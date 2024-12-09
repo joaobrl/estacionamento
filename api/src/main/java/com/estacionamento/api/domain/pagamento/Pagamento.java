@@ -24,15 +24,12 @@ public class Pagamento {
     @JoinColumn(name = "ticket_id")
     private Ticket ticket;
 
-    private BigDecimal valor;
-
     private LocalDateTime dataPagamento = LocalDateTime.now();
     @Enumerated(EnumType.STRING)
     private MetodoPagamento metodoPagamento;
 
-    public Pagamento(PagamentoDto dados) {
-        this.ticket = new Ticket();
-        this.valor = dados.valor();
-        this.metodoPagamento = dados.metodoPagamento();
+    public Pagamento(PagamentoDto pagamentoDto, Ticket ticket) {
+        this.ticket = ticket;
+        this.metodoPagamento = pagamentoDto.metodoPagamento();
     }
 }

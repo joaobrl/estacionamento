@@ -12,5 +12,6 @@ public record EstacionamentoCreateDto(
         EnderecoDto endereco,
         @NotNull
         Integer capacidade
+
 ) {
 }

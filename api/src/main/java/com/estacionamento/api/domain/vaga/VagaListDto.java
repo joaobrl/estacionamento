@@ -7,12 +7,14 @@ public record VagaListDto(
         String numero,
         VeiculoTipo veiculoTipo,
         Boolean disponibilidade
+
 ) {
     public VagaListDto(Vaga vaga) {
         this(
                 vaga.getId(),
                 vaga.getNumero(),
                 vaga.getVeiculoTipo(),
-                vaga.isDisponibilidade());
+                vaga.getDisponibilidade()
+        );
     }
 }

@@ -25,19 +25,13 @@ public class PagamentoController {
     public ResponseEntity registarPagamento(@RequestBody @Valid PagamentoDto dados, UriComponentsBuilder uriComponentsBuilder) {
         var pagamento = pagamentoService.pagamentoTicket(dados.ticketId(), dados.metodoPagamento());
         var uri = uriComponentsBuilder.path("/pagamentos/{id}").buildAndExpand(pagamento.getId()).toUri();
-        return ResponseEntity.created(uri).body(pagamento);
+        return ResponseEntity.created(uri).body(new PagamentoDto(pagamento));
     }
 
     @GetMapping("/listar")
     public ResponseEntity listarPagamentos() {
         var pagamentos = repository.findAll();
         return ResponseEntity.ok(pagamentos);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity detalharPagamento(@PathVariable Long id) {
-        var pagamento = repository.getReferenceById(id);
-        return ResponseEntity.ok(new PagamentoDto(pagamento));
     }
 
 }

@@ -10,11 +10,11 @@ public record PagamentoDto(
         @NotNull
         Long ticketId,
         @NotNull
-        BigDecimal valor,
-        @NotBlank
         MetodoPagamento metodoPagamento
 ) {
         public PagamentoDto(Pagamento pagamento) {
-        this(pagamento.getTicket().getId(), pagamento.getValor(), pagamento.getMetodoPagamento());
+        this(
+                pagamento.getTicket().getId(),
+                pagamento.getMetodoPagamento());
         }
 }
