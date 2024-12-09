@@ -14,33 +14,33 @@ public class EstacionamentoController {
 
     @Autowired
     private EstacionamentoRepository repository;
+    @Autowired
+    private EstacionamentoService estacionamentoService;
 
     @PostMapping
     @Transactional
     public ResponseEntity cadastrar (@RequestBody @Valid EstacionamentoCreateDto dados, UriComponentsBuilder uriBuilder) {
-        var estacionamento = new Estacionamento(dados);
-        repository.save(estacionamento);
+        var estacionamento = estacionamentoService.cadastrarEstacionamento(dados);
         var uri = uriBuilder.path("/estacionamentos/{id}").buildAndExpand(estacionamento.getId()).toUri();
         return ResponseEntity.created(uri).body(new EstacionamentoListDto(estacionamento));
     }
 
     @GetMapping("/listar")
     public ResponseEntity listar() {
-        var estacionamento = ResponseEntity.ok(repository.findAll());
-        return ResponseEntity.ok(new EstacionamentoListDto(estacionamento));
+        var estacionamento = estacionamentoService.listarEstacionamentos();
+        return ResponseEntity.ok(estacionamento);
     }
 
     @GetMapping("{id}")
     public ResponseEntity detalhar(@PathVariable Long id) {
-        var estacionamento = repository.getReferenceById(id);
+        var estacionamento = estacionamentoService.detalharEstacionamento(id);
         return ResponseEntity.ok(new EstacionamentoListDto(estacionamento));
     }
 
     @PutMapping("/atualizar")
     @Transactional
     public ResponseEntity atualizar(@RequestBody @Valid EstacionamentoUpdateDto dados) {
-        var estacionamento = repository.getReferenceById(dados.id());
-        estacionamento.atualizar(dados);
+        var estacionamento = estacionamentoService.atualizarEstacionamento(dados);
         return ResponseEntity.ok(new EstacionamentoListDto(estacionamento));
     }
 }
