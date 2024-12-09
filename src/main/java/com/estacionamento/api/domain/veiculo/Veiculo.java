@@ -17,7 +17,7 @@ public class Veiculo {
 
     @Enumerated(EnumType.STRING)
     private VeiculoTipo veiculoTipo;
-
+    @Column(name = "placa", unique = true)
     private String placa;
 
     private String modelo;

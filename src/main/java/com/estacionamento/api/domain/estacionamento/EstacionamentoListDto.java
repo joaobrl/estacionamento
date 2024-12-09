@@ -1,22 +1,27 @@
 package com.estacionamento.api.domain.estacionamento;
 
-import com.estacionamento.api.domain.endereco.Endereco;
-import com.estacionamento.api.domain.vaga.Vaga;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
 public record EstacionamentoListDto(
         Long id,
         String nome,
-        Endereco endereco,
-        Integer capacidade,
-        List<Vaga> vagas
+        Integer capacidade
 ) {
     public EstacionamentoListDto(Estacionamento estacionamento) {
-        this(estacionamento.getId(),
+        this(
+                estacionamento.getId(),
                 estacionamento.getNome(),
-                estacionamento.getEndereco(),
-                estacionamento.getCapacidade(),
-                estacionamento.getVagas());
+                estacionamento.getCapacidade()
+        );
+    }
+
+    public EstacionamentoListDto(ResponseEntity<List<Estacionamento>> estacionamento) {
+        this(
+                estacionamento.getBody().get(0).getId(),
+                estacionamento.getBody().get(0).getNome(),
+                estacionamento.getBody().get(0).getCapacidade()
+        );
     }
 }

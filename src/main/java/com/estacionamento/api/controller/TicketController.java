@@ -22,7 +22,7 @@ public class TicketController {
     public ResponseEntity abrirTicket (@RequestBody @Valid TicketCreateDto dados, UriComponentsBuilder uriBuilder) {
         var ticket = ticketService.criarTicket(dados);
         var uri = uriBuilder.path("/tickets/{id}").buildAndExpand(ticket.getId()).toUri();
-        return ResponseEntity.created(uri).build();
+        return ResponseEntity.created(uri).body(new TicketListDto(ticket));
     }
 
     @GetMapping("/{id}")

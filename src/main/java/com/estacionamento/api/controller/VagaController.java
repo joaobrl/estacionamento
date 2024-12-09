@@ -1,9 +1,6 @@
 package com.estacionamento.api.controller;
 
-import com.estacionamento.api.domain.vaga.VagaCreateDto;
-import com.estacionamento.api.domain.vaga.VagaDto;
-import com.estacionamento.api.domain.vaga.Vaga;
-import com.estacionamento.api.domain.vaga.VagaRepository;
+import com.estacionamento.api.domain.vaga.*;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,27 +14,28 @@ public class VagaController {
 
     @Autowired
     private VagaRepository repository;
+    @Autowired
+    private VagaService vagaService;
 
     @PostMapping
     @Transactional
-    public ResponseEntity cadastrar(@RequestBody @Valid VagaCreateDto dados, UriComponentsBuilder uriBuilder) {
-        var vaga = new Vaga(dados);
-        repository.save(vaga);
+    public ResponseEntity<VagaListDto> cadastrar(@RequestBody @Valid VagaCreateDto dados, UriComponentsBuilder uriBuilder) {
+        var vaga = vagaService.criarVaga(dados);
         var uri = uriBuilder.path("/vagas/{id}").buildAndExpand(vaga.getId()).toUri();
-        return ResponseEntity.created(uri).body(vaga);
+        return ResponseEntity.created(uri).body(new VagaListDto(vaga));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity buscarPorId(@PathVariable Long id) {
-        var vaga = repository.getReferenceById(id);
-        return ResponseEntity.ok(new VagaDto(vaga));
+    public ResponseEntity<VagaListDto> buscarPorId(@PathVariable Long id) {
+        var vaga = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Vaga não encontrada"));
+        return ResponseEntity.ok(new VagaListDto(vaga));
     }
 
     @PutMapping("/atualizar")
     @Transactional
-    public ResponseEntity atualizar(@RequestBody @Valid VagaDto dados) {
-        var vaga = repository.getReferenceById(dados.id());
-        vaga.atualizar(dados);
-        return ResponseEntity.ok(new VagaDto(vaga));
+    public ResponseEntity atualizar(@RequestBody @Valid VagaUpdateDto dados) {
+        var vaga = vagaService.atualizarVaga(dados);
+        return ResponseEntity.ok(new VagaListDto(vaga));
     }
 }

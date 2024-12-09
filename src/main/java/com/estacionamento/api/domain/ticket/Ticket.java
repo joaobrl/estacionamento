@@ -2,8 +2,6 @@ package com.estacionamento.api.domain.ticket;
 
 import com.estacionamento.api.domain.vaga.Vaga;
 import com.estacionamento.api.domain.veiculo.Veiculo;
-import com.estacionamento.api.domain.ticket.TicketCreateDto;
-import com.estacionamento.api.domain.ticket.TicketUpdateDto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
@@ -34,20 +32,22 @@ public class Ticket {
     private Vaga vaga;
 
     @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
-    private LocalDateTime horaEntrada = LocalDateTime.now();
+    private LocalDateTime horaEntrada;
 
     @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
     private LocalDateTime horaSaida;
 
     private BigDecimal valor;
 
-    public Ticket(TicketCreateDto dados) {
-        this.veiculo = new Veiculo();
-        this.vaga = new Vaga();
+    public Ticket(TicketCreateDto dados, Veiculo veiculo, Vaga vaga) {
+        this.veiculo = veiculo;
+        this.vaga = vaga;
         this.horaEntrada = LocalDateTime.now();
     }
 
     public void atualizar(TicketUpdateDto dados) {
-        this.horaSaida = dados.horaSaida();
+        if (dados.horaSaida().isAfter(this.horaEntrada)) {
+            this.horaSaida = dados.horaSaida();
+        }
     }
 }

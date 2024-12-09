@@ -1,10 +1,12 @@
 package com.estacionamento.api.domain.pagamento;
 
-import com.estacionamento.api.domain.ticket.Ticket;
+import com.estacionamento.api.domain.ticket.TicketListDto;
 import com.estacionamento.api.domain.ticket.TicketRepository;
 import com.estacionamento.api.domain.vaga.VagaRepository;
+import com.estacionamento.api.domain.vaga.VagaUpdateDto;
 import com.estacionamento.api.domain.veiculo.Veiculo;
 import com.estacionamento.api.domain.veiculo.VeiculoRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -62,12 +64,15 @@ public class PagamentoService {
     };
 
     private BigDecimal calcularValorPlanoMensal(Veiculo veiculo) {
-        return switch (veiculo.getVeiculoTipo()) {
-            case CARRO -> BigDecimal.valueOf(VALOR_CARRO_MES);
-            case MOTO -> BigDecimal.valueOf(VALOR_MOTO_MES);
-            case CAMINHAO -> BigDecimal.valueOf(VALOR_CAMINHAO_MES);
-            default -> throw new RuntimeException("Tipo de veículo desconhecido");
-        };
+        if (veiculo.getPlanoMensal()) {
+            return switch (veiculo.getVeiculoTipo()) {
+                case CARRO -> BigDecimal.valueOf(VALOR_CARRO_MES);
+                case MOTO -> BigDecimal.valueOf(VALOR_MOTO_MES);
+                case CAMINHAO -> BigDecimal.valueOf(VALOR_CAMINHAO_MES);
+                default -> throw new RuntimeException("Tipo de veículo desconhecido");
+            };
+        } else {
+            throw new RuntimeException("Veículo não possui plano mensal");}
     }
     private BigDecimal calcularValorDiaria(Veiculo veiculo, Duration duration) {
         long dias = duration.toDays() + 1;
@@ -87,21 +92,16 @@ public class PagamentoService {
         };
     }
 
-
-    public Pagamento pagamentoTicket(Long ticketId, MetodoPagamento metodoPagamento){
-        var ticket = ticketRepository.findById(ticketId)
+    @Transactional
+    public Pagamento pagamentoTicket(PagamentoDto pagamentoDto){
+        var ticket = ticketRepository.findById(pagamentoDto.ticketId())
                 .orElseThrow(() -> new RuntimeException("Ticket não encontrado"));
         var vaga = vagaRepository.findById(ticket.getVaga().getId())
                 .orElseThrow(() -> new RuntimeException("Vaga não encontrada"));
 
-        Pagamento novoPagamento = new Pagamento();
-        novoPagamento.setId(ticketId);
-        novoPagamento.getTicket().getValor();
-        novoPagamento.setMetodoPagamento(metodoPagamento);
-
+        Pagamento novoPagamento = new Pagamento(pagamentoDto, ticket);
         vaga.setDisponibilidade(true);
         vagaRepository.save(vaga);
-
         return pagamentoRepository.save(novoPagamento);
     }
 }

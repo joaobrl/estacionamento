@@ -24,7 +24,7 @@ public class VeiculoController {
         var veiculo = new Veiculo(veiculoCreateDto);
         repository.save(veiculo);
         var uri = uriBuilder.path("/veiculo/{id}").buildAndExpand(veiculo.getId()).toUri();
-        return ResponseEntity.created(uri).body(veiculo);
+        return ResponseEntity.created(uri).body(new VeiculoListDto(veiculo));
     }
 
     @GetMapping("/{id}")

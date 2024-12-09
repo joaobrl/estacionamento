@@ -2,17 +2,16 @@ package com.estacionamento.api.domain.estacionamento;
 
 import com.estacionamento.api.domain.endereco.Endereco;
 import com.estacionamento.api.domain.vaga.Vaga;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
 @Entity
 @Table(name = "estacionamentos")
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(of ="id")
@@ -20,16 +19,18 @@ public class Estacionamento {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Setter(AccessLevel.NONE)
     private Long id;
-
+    @Column(name = "nome", unique = true, nullable = false)
     private String nome;
 
     @Embedded
     private Endereco endereco;
-
+    @Column(name = "capacidade", nullable = false)
     private Integer capacidade;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "estacionamento", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Vaga> vagas;
 
     public Estacionamento(EstacionamentoCreateDto dados) {

@@ -23,9 +23,9 @@ public class PagamentoController {
     @PostMapping
     @Transactional
     public ResponseEntity registarPagamento(@RequestBody @Valid PagamentoDto dados, UriComponentsBuilder uriComponentsBuilder) {
-        var pagamento = pagamentoService.pagamentoTicket(dados.ticketId(), dados.metodoPagamento());
+        var pagamento = pagamentoService.pagamentoTicket(dados);
         var uri = uriComponentsBuilder.path("/pagamentos/{id}").buildAndExpand(pagamento.getId()).toUri();
-        return ResponseEntity.created(uri).body(pagamento);
+        return ResponseEntity.created(uri).body(new PagamentoDto(pagamento));
     }
 
     @GetMapping("/listar")

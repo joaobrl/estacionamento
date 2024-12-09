@@ -53,10 +53,10 @@
   **Corpo**:  
   ```json
   {
-    "tipo": "carro",
-    "placa": "ABC1234",
-    "modelo": "Gol",
-    "marca": "Volkswagen",
+    "placa": "abc-2345", 
+    "modelo": "Corolla",
+    "marca": "Toyota", 
+    "veiculoTipo": "CARRO", 
     "planoMensal": "false"
   }
   ```

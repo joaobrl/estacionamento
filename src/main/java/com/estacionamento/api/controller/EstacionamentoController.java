@@ -1,10 +1,6 @@
 package com.estacionamento.api.controller;
 
-import com.estacionamento.api.domain.estacionamento.EstacionamentoCreateDto;
-import com.estacionamento.api.domain.estacionamento.EstacionamentoListDto;
-import com.estacionamento.api.domain.estacionamento.EstacionamentoUpdateDto;
-import com.estacionamento.api.domain.estacionamento.Estacionamento;
-import com.estacionamento.api.domain.estacionamento.EstacionamentoRepository;
+import com.estacionamento.api.domain.estacionamento.*;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
-@RequestMapping("estacionamentos")
+@RequestMapping("/estacionamentos")
 public class EstacionamentoController {
 
     @Autowired
@@ -25,12 +21,13 @@ public class EstacionamentoController {
         var estacionamento = new Estacionamento(dados);
         repository.save(estacionamento);
         var uri = uriBuilder.path("/estacionamentos/{id}").buildAndExpand(estacionamento.getId()).toUri();
-        return ResponseEntity.created(uri).body(estacionamento);
+        return ResponseEntity.created(uri).body(new EstacionamentoListDto(estacionamento));
     }
 
-    @GetMapping("listar")
+    @GetMapping("/listar")
     public ResponseEntity listar() {
-        return ResponseEntity.ok(repository.findAll());
+        var estacionamento = ResponseEntity.ok(repository.findAll());
+        return ResponseEntity.ok(new EstacionamentoListDto(estacionamento));
     }
 
     @GetMapping("{id}")
