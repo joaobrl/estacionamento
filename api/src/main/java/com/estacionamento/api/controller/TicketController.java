@@ -1,6 +1,9 @@
 package com.estacionamento.api.controller;
 
 import com.estacionamento.api.domain.ticket.*;
+import com.estacionamento.api.domain.ticket.dto.TicketCreateDto;
+import com.estacionamento.api.domain.ticket.dto.TicketListDto;
+import com.estacionamento.api.domain.ticket.dto.TicketUpdateDto;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +30,7 @@ public class TicketController {
 
     @GetMapping("/{id}")
     public ResponseEntity listar(@PathVariable Long id) {
-        var ticket = repository.getReferenceById(id);
+        var ticket = ticketService.buscarTicketPorId(id);
         return ResponseEntity.ok(new TicketListDto(ticket));
     }
 
