@@ -1,18 +1,17 @@
-package com.estacionamento.api.domain.veiculo;
+package com.estacionamento.api.domain.veiculo.dto;
 
+import com.estacionamento.api.domain.veiculo.VeiculoTipo;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record VeiculoCreateDto(
-        @NotNull
+        @NotBlank
         String placa,
-        @NotBlank
-        String modelo,
-        @NotBlank
-        String marca,
+
         @NotNull
         VeiculoTipo veiculoTipo,
-        @NotNull
-        Boolean planoMensal
+        String modelo,
+
+        String marca
 ) {
 }

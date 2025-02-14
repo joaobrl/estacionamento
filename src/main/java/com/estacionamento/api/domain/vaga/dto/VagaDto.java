@@ -1,18 +1,14 @@
-package com.estacionamento.api.domain.vaga;
+package com.estacionamento.api.domain.vaga.dto;
 
 import com.estacionamento.api.domain.veiculo.VeiculoTipo;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-public record VagaCreateDto(
-        @NotNull
-        Long estacionamentoId,
+public record VagaDto(
         @NotBlank
-        String numero,
+        String numeroVaga,
         @NotNull
         VeiculoTipo veiculoTipo,
-
         @NotNull
-        Boolean disponibilidade
-) {
+        Boolean disponibilidade) {
 }

@@ -1,18 +1,16 @@
-package com.estacionamento.api.domain.pagamento;
+package com.estacionamento.api.domain.pagamento.dto;
 
-import com.estacionamento.api.domain.ticket.Ticket;
-import jakarta.validation.constraints.NotBlank;
+import com.estacionamento.api.domain.pagamento.MetodoPagamento;
+import com.estacionamento.api.domain.pagamento.Pagamento;
 import jakarta.validation.constraints.NotNull;
 
-import java.math.BigDecimal;
-
-public record PagamentoDto(
+public record PagamentoTicketDto(
         @NotNull
         Long ticketId,
         @NotNull
         MetodoPagamento metodoPagamento
 ) {
-        public PagamentoDto(Pagamento pagamento) {
+        public PagamentoTicketDto(Pagamento pagamento) {
         this(
                 pagamento.getTicket().getId(),
                 pagamento.getMetodoPagamento());

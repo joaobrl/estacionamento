@@ -1,36 +1,26 @@
 package com.estacionamento.api.domain.veiculo;
 
+import com.estacionamento.api.domain.veiculo.dto.VeiculoCreateDto;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Entity
-@Table(name = "veiculos")
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(of ="id")
+@Embeddable
 public class Veiculo {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+    private String placa;
     @Enumerated(EnumType.STRING)
     private VeiculoTipo veiculoTipo;
-    @Column(name = "placa", unique = true)
-    private String placa;
-
     private String modelo;
-
     private String marca;
 
-    private Boolean planoMensal;
-
     public Veiculo(VeiculoCreateDto veiculoCreateDto) {
-        this.veiculoTipo = veiculoCreateDto.veiculoTipo();
         this.placa = veiculoCreateDto.placa();
+        this.veiculoTipo = veiculoCreateDto.veiculoTipo();
         this.modelo = veiculoCreateDto.modelo();
         this.marca = veiculoCreateDto.marca();
-        this.planoMensal = veiculoCreateDto.planoMensal();
     }
 }

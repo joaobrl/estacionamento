@@ -1,6 +1,8 @@
 package com.estacionamento.api.controller;
 
-import com.estacionamento.api.domain.ticket.*;
+import com.estacionamento.api.domain.ticket.TicketService;
+import com.estacionamento.api.domain.ticket.dto.TicketCreateDto;
+import com.estacionamento.api.domain.ticket.dto.TicketListDto;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +13,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 @RestController
 @RequestMapping("/tickets")
 public class TicketController {
-
-    @Autowired
-    private TicketRepository repository;
     @Autowired
     private TicketService ticketService;
 
@@ -27,14 +26,14 @@ public class TicketController {
 
     @GetMapping("/{id}")
     public ResponseEntity listar(@PathVariable Long id) {
-        var ticket = repository.getReferenceById(id);
+        var ticket = ticketService.buscarTicketPorId(id);
         return ResponseEntity.ok(new TicketListDto(ticket));
     }
 
-    @PutMapping("/saida")
+    @PutMapping("/saida/{id}")
     @Transactional
-    public ResponseEntity fecharTicket (@RequestBody @Valid TicketUpdateDto dados) {
-        var ticket = ticketService.fecharTicket(dados);
+    public ResponseEntity fecharTicket (@PathVariable Long id) {
+        var ticket = ticketService.fecharTicket(id);
         return ResponseEntity.ok(new TicketListDto(ticket));
     }
 

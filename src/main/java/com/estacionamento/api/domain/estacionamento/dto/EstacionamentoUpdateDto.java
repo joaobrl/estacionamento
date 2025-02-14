@@ -1,4 +1,4 @@
-package com.estacionamento.api.domain.estacionamento;
+package com.estacionamento.api.domain.estacionamento.dto;
 
 import com.estacionamento.api.domain.endereco.EnderecoDto;
 import jakarta.validation.constraints.NotNull;
