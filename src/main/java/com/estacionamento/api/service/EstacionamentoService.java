@@ -1,13 +1,17 @@
-package com.estacionamento.api.domain.estacionamento;
+package com.estacionamento.api.service;
 
+import com.estacionamento.api.domain.estacionamento.Estacionamento;
 import com.estacionamento.api.domain.estacionamento.dto.EstacionamentoCreateDto;
 import com.estacionamento.api.domain.estacionamento.dto.EstacionamentoUpdateDto;
 import com.estacionamento.api.domain.exceptions.RecursoNaoEncontradoException;
+import com.estacionamento.api.domain.exceptions.VagaNaoDisponivelException;
 import com.estacionamento.api.domain.vaga.Vaga;
 import com.estacionamento.api.domain.vaga.dto.VagaCreateDto;
 import com.estacionamento.api.domain.vaga.dto.VagaDto;
+import com.estacionamento.api.domain.veiculo.Veiculo;
 import com.estacionamento.api.domain.veiculo.VeiculoTipo;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.estacionamento.api.repository.EstacionamentoRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,10 +19,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class EstacionamentoService {
 
-    @Autowired
-    private EstacionamentoRepository estacionamentoRepository;
+    private final EstacionamentoRepository estacionamentoRepository;
 
     @Transactional
     public Estacionamento cadastrarEstacionamento(EstacionamentoCreateDto dados)  {
@@ -108,5 +112,23 @@ public class EstacionamentoService {
                 .filter(vaga -> !vaga.getDisponibilidade() && vaga.getVeiculoTipo() == tipoVeiculoEnum)
                 .map(vaga -> new VagaDto(vaga.getNumeroVaga(), vaga.getVeiculoTipo(), vaga.getDisponibilidade()))
                 .collect(Collectors.toList());
+    }
+
+    public Estacionamento findEstacionamentoById(Long id) {
+        return estacionamentoRepository.findById(id)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Estacionamento", id));
+    }
+
+    public Estacionamento saveEstacionamento(Estacionamento estacionamento) {
+        return estacionamentoRepository.save(estacionamento);
+    }
+
+    public Vaga verificarDisponibilidadeVaga(Estacionamento estacionamento, Veiculo veiculo) {
+        return estacionamento.getVagas()
+                .stream()
+                .filter(Vaga::getDisponibilidade)
+                .filter(vaga -> vaga.getVeiculoTipo().equals(veiculo.getVeiculoTipo()))
+                .findFirst()
+                .orElseThrow(VagaNaoDisponivelException::new);
     }
 }

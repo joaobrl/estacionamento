@@ -4,7 +4,7 @@ import com.estacionamento.api.domain.pagamento.dto.PagamentoListDto;
 import com.estacionamento.api.domain.pagamento.dto.PagamentoPlanoMensalDto;
 import com.estacionamento.api.domain.pagamento.dto.PagamentoReciboDto;
 import com.estacionamento.api.domain.pagamento.dto.PagamentoTicketDto;
-import com.estacionamento.api.domain.pagamento.PagamentoService;
+import com.estacionamento.api.service.PagamentoService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

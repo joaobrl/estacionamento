@@ -1,5 +1,6 @@
-package com.estacionamento.api.domain.ticket;
+package com.estacionamento.api.repository;
 
+import com.estacionamento.api.domain.ticket.Ticket;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

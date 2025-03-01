@@ -1,5 +1,6 @@
-package com.estacionamento.api.domain.cliente;
+package com.estacionamento.api.repository;
 
+import com.estacionamento.api.domain.cliente.Cliente;
 import com.estacionamento.api.domain.veiculo.Veiculo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

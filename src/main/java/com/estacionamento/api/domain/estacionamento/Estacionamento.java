@@ -7,7 +7,6 @@ import com.estacionamento.api.domain.exceptions.EstacionamentoLotadoException;
 import com.estacionamento.api.domain.exceptions.VagaComNumeroJaExistenteException;
 import com.estacionamento.api.domain.vaga.Vaga;
 import com.estacionamento.api.domain.vaga.dto.VagaCreateDto;
-import com.estacionamento.api.domain.vaga.dto.VagaDto;
 import jakarta.persistence.*;
 import lombok.*;
 

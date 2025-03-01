@@ -2,7 +2,6 @@ package com.estacionamento.api.domain.vaga;
 
 import com.estacionamento.api.domain.veiculo.VeiculoTipo;
 import jakarta.persistence.Embeddable;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

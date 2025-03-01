@@ -1,6 +1,6 @@
 package com.estacionamento.api.controller;
 
-import com.estacionamento.api.domain.ticket.TicketService;
+import com.estacionamento.api.service.TicketService;
 import com.estacionamento.api.domain.ticket.dto.TicketCreateDto;
 import com.estacionamento.api.domain.ticket.dto.TicketListDto;
 import jakarta.transaction.Transactional;
@@ -27,13 +27,6 @@ public class TicketController {
     @GetMapping("/{id}")
     public ResponseEntity listar(@PathVariable Long id) {
         var ticket = ticketService.buscarTicketPorId(id);
-        return ResponseEntity.ok(new TicketListDto(ticket));
-    }
-
-    @PutMapping("/saida/{id}")
-    @Transactional
-    public ResponseEntity fecharTicket (@PathVariable Long id) {
-        var ticket = ticketService.fecharTicket(id);
         return ResponseEntity.ok(new TicketListDto(ticket));
     }
 

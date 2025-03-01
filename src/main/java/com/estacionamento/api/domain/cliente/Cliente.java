@@ -73,13 +73,14 @@ public class Cliente {
         this.veiculos.add(novoVeiculo);
     }
 
+    public void removerVeiculo(String placa) {
+        veiculos.removeIf(veiculo -> veiculo.getPlaca().equals(placa));
+    }
+
     // Método para atualizar informações do cliente
     public void atualizar(ClienteUpdateDto clienteUpdateDto) {
         if (clienteUpdateDto.nome() != null) {
             this.nome = clienteUpdateDto.nome();
-        }
-        if (clienteUpdateDto.cpf() != null) {
-            this.cpf = clienteUpdateDto.cpf();
         }
         if (clienteUpdateDto.email() != null) {
             this.email = clienteUpdateDto.email();

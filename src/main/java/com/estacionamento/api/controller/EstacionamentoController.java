@@ -1,13 +1,12 @@
 package com.estacionamento.api.controller;
 
-import com.estacionamento.api.domain.estacionamento.*;
+import com.estacionamento.api.service.EstacionamentoService;
 import com.estacionamento.api.domain.estacionamento.dto.EstacionamentoCreateDto;
 import com.estacionamento.api.domain.estacionamento.dto.EstacionamentoDetalharDto;
 import com.estacionamento.api.domain.estacionamento.dto.EstacionamentoListDto;
 import com.estacionamento.api.domain.estacionamento.dto.EstacionamentoUpdateDto;
 import com.estacionamento.api.domain.vaga.dto.VagaCreateDto;
 import com.estacionamento.api.domain.vaga.dto.VagaDto;
-import com.estacionamento.api.domain.veiculo.VeiculoTipo;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

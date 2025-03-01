@@ -1,4 +1,4 @@
-package com.estacionamento.api.domain.pagamento;
+package com.estacionamento.api.repository;
 
 import com.estacionamento.api.domain.pagamento.Pagamento;
 import org.springframework.data.jpa.repository.JpaRepository;

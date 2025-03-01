@@ -1,12 +1,11 @@
-package com.estacionamento.api.domain.estacionamento;
+package com.estacionamento.api.repository;
 
-import com.estacionamento.api.domain.vaga.Vaga;
+import com.estacionamento.api.domain.estacionamento.Estacionamento;
 import com.estacionamento.api.domain.veiculo.VeiculoTipo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.Collection;
 import java.util.List;
 
 public interface EstacionamentoRepository extends JpaRepository<Estacionamento, Long> {

@@ -66,4 +66,14 @@ public class Pagamento {
         this.tipoPagamento = TipoPagamento.PLANO_MENSAL;
         this.dataPagamento = LocalDateTime.now();
     }
+
+    // Metodo para criar pagamento de Ticket
+    public static Pagamento criarPagamentoTicket(PagamentoTicketDto pagamentoTicketDto, Ticket ticket, Estacionamento estacionamento) {
+        return new Pagamento(pagamentoTicketDto, ticket, estacionamento);
+    }
+
+    // Metodo para criar pagamento de Plano Mensal
+    public static Pagamento criarPagamentoPlanoMensal(PagamentoPlanoMensalDto pagamentoPlanoMensalDto, Cliente cliente, double valorMensalidade) {
+        return new Pagamento(pagamentoPlanoMensalDto, cliente, BigDecimal.valueOf(valorMensalidade));
+    }
 }

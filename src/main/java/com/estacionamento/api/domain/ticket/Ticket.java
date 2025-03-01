@@ -1,6 +1,7 @@
 package com.estacionamento.api.domain.ticket;
 
 import com.estacionamento.api.domain.cliente.Cliente;
+import com.estacionamento.api.domain.cliente.TipoPlano;
 import com.estacionamento.api.domain.estacionamento.Estacionamento;
 import com.estacionamento.api.domain.veiculo.Veiculo;
 import com.estacionamento.api.infra.config.ValoresTarifas;
@@ -11,6 +12,7 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "tickets")
@@ -65,63 +67,72 @@ public class Ticket {
 
     // Método para calcular o valor do ticket
     public BigDecimal calcularValor() {
-        // Calcular duração da permanência
+        // Calcular a duração da permanência
         Duration duracao = Duration.between(horaEntrada, horaSaida);
         long minutosTotais = duracao.toMinutes();
         long horasCompletas = duracao.toHours();
         long minutosExcedentes = minutosTotais % 60;
 
-        // Verificar mudança de dia (se entrar num dia e sair em outro, é cobrado diária)
+        // Verificar se houve mudança de dia
         boolean mudouDeDia = !horaEntrada.toLocalDate().equals(horaSaida.toLocalDate());
 
-        // Determinar valores por tipo de veículo
+        // Determinar os valores por tipo de veículo
         double valorHora;
         double valorDia;
         switch (veiculo.getVeiculoTipo()) {
-            case MOTO -> {
+            case MOTO:
                 valorHora = ValoresTarifas.MOTO_HORA;
                 valorDia = ValoresTarifas.MOTO_DIA;
-            }
-            case CARRO -> {
+                break;
+            case CARRO:
                 valorHora = ValoresTarifas.CARRO_HORA;
                 valorDia = ValoresTarifas.CARRO_DIA;
+                break;
+            default:
+                throw new IllegalArgumentException("Tipo de veículo inválido");
+        }
+
+        // Verifica a permanência entre 6h e 24h para cobrar a diária
+        if (horasCompletas >= 6 && horasCompletas < 24) {
+            return BigDecimal.valueOf(valorDia);
+        }
+
+        // Se houver mudança de dia, cobra diária
+        if (mudouDeDia) {
+            return BigDecimal.valueOf(valorDia);
+        }
+
+        // Caso a permanência seja maior que 24h, calcula as diárias e horas extras
+        if (horasCompletas >= 24) {
+            // Calcular o número de dias completos
+            long diasCompletos = duracao.toDays();
+            long minutosRestantes = duracao.toMinutes() % (24 * 60);
+            double valorTotal = diasCompletos * valorDia;
+
+            // Se o tempo restante for superior a 6h, cobra mais uma diária
+            if (minutosRestantes >= 6 * 60) {
+                valorTotal += valorDia;
+                minutosRestantes -= 6 * 60; // Reinicia a contagem de horas extras
             }
-            default -> throw new IllegalArgumentException("Tipo de veículo inválido");
+
+            // Se houver horas extras depois de completar o dia, cobra por elas
+            if (minutosRestantes > 0) {
+                valorTotal += (minutosRestantes / 60) * valorHora;
+            }
+
+            return BigDecimal.valueOf(valorTotal);
         }
 
-        // Verificar se houve mudança de dia ou se o tempo de permanencia ultrapassou 6h
-        if (mudouDeDia || horasCompletas >= 6) {
-            return BigDecimal.valueOf(calcularValorDiario(duracao, valorDia));
-        }
-
-        // Arredondamento do valor por hora com base na tolerância de 15 minutos
+        // Caso a permanência seja inferior a 6h, verifica se há cobrança mínima de 1 hora
         if (minutosExcedentes > 15) {
-            horasCompletas += 1;
+            horasCompletas += 1; // Adiciona 1 hora extra se o tempo exceder 15 minutos
         }
 
-        // Cobrança minima de 1 hora
         if (horasCompletas < 1) {
-            horasCompletas = 1; // Cobrança mínima de 1 hora
+            horasCompletas = 1; // Garantir cobrança mínima de 1 hora
         }
 
-        return BigDecimal.valueOf(horasCompletas * valorHora); // Cálculo do valor total com base no número de horas
+        return BigDecimal.valueOf(horasCompletas * valorHora); // Calcula o valor com base nas horas
     }
 
-    private double calcularValorDiario(Duration duracao, double valorDia) {
-        // Se o tempo de permanência ultrapassar 24h, será cobrado mais uma diária
-        long diasCompletos = duracao.toDays();
-        long minutosRestantes = duracao.toMinutes() % (24 * 60);
-
-        // Tolerância de 15 minutos para cobrar uma diária adicional
-        if (minutosRestantes >= 15) {
-            diasCompletos += 1;
-        }
-
-        // Retorna o valor da diária baseado no número de dias completos (incluindo a tolerância de 15 minutos)
-        return diasCompletos * valorDia;
-    }
-
-    public BigDecimal multaPorHorario() {
-        return BigDecimal.valueOf(50.0);
-    }
 }
