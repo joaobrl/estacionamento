@@ -1,11 +1,10 @@
 package com.estacionamento.api.domainTests.estacionamentoTests;
 
 import com.estacionamento.api.domain.estacionamento.Estacionamento;
-import com.estacionamento.api.domain.estacionamento.EstacionamentoRepository;
-import com.estacionamento.api.domain.estacionamento.EstacionamentoService;
+import com.estacionamento.api.repository.EstacionamentoRepository;
+import com.estacionamento.api.service.EstacionamentoService;
 import com.estacionamento.api.domain.estacionamento.dto.EstacionamentoCreateDto;
 import com.estacionamento.api.domain.estacionamento.dto.EstacionamentoUpdateDto;
-import com.estacionamento.api.domain.exceptions.EstacionamentoLotadoException;
 import com.estacionamento.api.domain.exceptions.VagaComNumeroJaExistenteException;
 import com.estacionamento.api.domain.vaga.dto.VagaCreateDto;
 import com.estacionamento.api.domain.vaga.dto.VagaDto;

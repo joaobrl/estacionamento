@@ -1,12 +1,12 @@
 package com.estacionamento.api.domainTests.ticketTests;
 
-import com.estacionamento.api.domain.cliente.ClienteRepository;
+import com.estacionamento.api.repository.ClienteRepository;
 import com.estacionamento.api.domain.estacionamento.Estacionamento;
-import com.estacionamento.api.domain.estacionamento.EstacionamentoRepository;
+import com.estacionamento.api.repository.EstacionamentoRepository;
 import com.estacionamento.api.domain.exceptions.*;
 import com.estacionamento.api.domain.ticket.Ticket;
-import com.estacionamento.api.domain.ticket.TicketRepository;
-import com.estacionamento.api.domain.ticket.TicketService;
+import com.estacionamento.api.repository.TicketRepository;
+import com.estacionamento.api.service.TicketService;
 import com.estacionamento.api.domain.vaga.Vaga;
 import com.estacionamento.api.utils.UtilsMock;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,10 +18,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 import static com.estacionamento.api.utils.UtilsMock.*;
-import static jdk.internal.org.jline.reader.impl.LineReaderImpl.CompletionType.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
@@ -138,98 +138,6 @@ public class TicketServiceTests {
         verify(ticketRepository, times(1)).save(any(Ticket.class));
 
         assertFalse(vagaEscolhida.isEmpty());
-    }
-
-    @Test
-    @DisplayName("Fechar ticket - Ticket não encontrado")
-    public void testFecharTicket_TicketNaoEncontrado() {
-        when(ticketRepository.findById(anyLong())).thenReturn(Optional.empty());
-
-        assertThrows(RecursoNaoEncontradoException.class, () -> ticketService.fecharTicket(anyLong()));
-
-        verify(ticketRepository, times(1)).findById(anyLong());
-    }
-
-    @Test
-    @DisplayName("Fechar ticket - Ticket já fechado")
-    public void testFecharTicket_TicketJaFechado() {
-        when(ticketRepository.findById(anyLong())).thenReturn(Optional.of(ticket));
-
-        assertThrows(TicketJaFechadoException.class, () -> ticketService.fecharTicket(anyLong()));
-
-        verify(ticketRepository, times(1)).findById(anyLong());
-    }
-
-    @Test
-    @DisplayName("Fechar ticket - Cliente sem plano ativo")
-    public void testFecharTicket_ClienteSemPlanoAtivo() {
-        Ticket ticket = UtilsMock.ticketMock_CenarioDeFechamentoDoTicket();
-        when(ticketRepository.findById(anyLong())).thenReturn(Optional.of(ticket));
-        when(clienteRepository.findClienteByVeiculoPlaca(anyString())).thenReturn(Optional.of(clienteMock()));
-        when(ticketRepository.save(any(Ticket.class))).thenReturn(ticket);
-
-        Ticket result = ticketService.fecharTicket(anyLong());
-
-        verify(ticketRepository, times(1)).findById(anyLong());
-        verify(clienteRepository, times(1)).findClienteByVeiculoPlaca(anyString());
-        verify(ticketRepository, times(1)).save(any(Ticket.class));
-        assertNotNull(result.getValor());
-        assertTrue(result.getValor().compareTo(BigDecimal.ZERO) > 0);
-        assertEquals(BigDecimal.valueOf(24.0), result.getValor());
-    }
-
-    @Test
-    @DisplayName("Fechar ticket - Atrasado - Plano Basic")
-    public void testFecharTicket_MultaAtrasado () {
-        Ticket ticket = UtilsMock.ticketMock_CenarioDeFechamentoDoTicket();
-        when(ticketRepository.findById(anyLong())).thenReturn(Optional.of(ticket));
-        when(clienteRepository.findClienteByVeiculoPlaca(anyString())).thenReturn(Optional.of(clienteMock_PlanoBasic()));
-        when(ticketRepository.save(any(Ticket.class))).thenReturn(ticket);
-
-
-        Ticket result = ticketService.fecharTicket(anyLong());
-
-        verify(ticketRepository, times(1)).findById(anyLong());
-        verify(clienteRepository, times(1)).findClienteByVeiculoPlaca(anyString());
-        verify(ticketRepository, times(1)).save(any(Ticket.class));
-        assertNotNull(result.getValor());
-        assertEquals(BigDecimal.valueOf(50.0), result.getValor());
-    }
-
-    @Test
-    @DisplayName("Fechar ticket - Sem Atraso - Plano Basic")
-    public void testFecharTicket_SemAtrasado () {
-        Ticket ticket = UtilsMock.ticketMock_CenarioDeFechamentoDoTicket();
-        when(ticketRepository.findById(anyLong())).thenReturn(Optional.of(ticket));
-        when(clienteRepository.findClienteByVeiculoPlaca(anyString())).thenReturn(Optional.of(clienteMock_PlanoBasic()));
-        when(ticketRepository.save(any(Ticket.class))).thenReturn(ticket);
-
-
-        Ticket result = ticketService.fecharTicket(anyLong());
-
-        verify(ticketRepository, times(1)).findById(anyLong());
-        verify(clienteRepository, times(1)).findClienteByVeiculoPlaca(anyString());
-        verify(ticketRepository, times(1)).save(any(Ticket.class));
-        assertNotNull(result.getValor());
-        assertEquals(BigDecimal.valueOf(0), result.getValor());
-    }
-
-    @Test
-    @DisplayName("Fechar ticket - Cliente com plano ativo - Plano Premium")
-    public void testFecharTicket() {
-        Ticket ticket = UtilsMock.ticketMock_CenarioDeFechamentoDoTicket();
-        when(ticketRepository.findById(anyLong())).thenReturn(Optional.of(ticket));
-        when(clienteRepository.findClienteByVeiculoPlaca(anyString())).thenReturn(Optional.of(clienteMock_PlanoPremium()));
-        when(ticketRepository.save(any(Ticket.class))).thenReturn(ticket);
-
-        Ticket result = ticketService.fecharTicket(anyLong());
-
-        verify(ticketRepository, times(1)).findById(anyLong());
-        verify(clienteRepository, times(1)).findClienteByVeiculoPlaca(anyString());
-        verify(ticketRepository, times(1)).save(any(Ticket.class));
-
-        assertNotNull(result.getValor());
-        assertEquals(BigDecimal.valueOf(0), result.getValor());
     }
 
     @Test

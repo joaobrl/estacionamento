@@ -1,172 +1,170 @@
-
 # Documentação do Sistema de Estacionamento
 
 ## 1. Valores Cobrados por Tipo de Veículo
-- **Motos**:  
-  - R$2,00 por hora  
-  - R$15,00 por dia  
-  - R$200,00 por mês  
-- **Carros**:  
-  - R$5,00 por hora  
-  - R$30,00 por dia  
-  - R$400,00 por mês  
-- **Caminhões**:  
-  - R$10,00 por hora  
-  - R$60,00 por dia  
-  - R$800,00 por mês  
 
-## 2. Preço por Hora, Dia ou Mês
-- **Hora**: Valor cobrado com base na quantidade de horas estacionadas.
-- **Dia**: Valor fixo cobrado por um dia inteiro de estacionamento.
-- **Mês**: Plano mensal com desconto, cobrado mensalmente.
+- **Motos**:
+  - R\$3,00 por hora
+  - R\$18,00 por dia
+  - R\$350,00 (Plano Básico) / R\$500,00 (Plano Premium) por mês
+- **Carros**:
+  - R\$6,00 por hora
+  - R\$35,00 por dia
+  - R\$350,00 (Plano Básico) / R\$500,00 (Plano Premium) por mês
+- **Caminhões**:
+  - Obrigatório plano mensal: R\$1000,00 (Plano Especial)
 
----
+## 2. Fluxo do Sistema
 
-## 3. Entidades e Relacionamentos
-
-### **Entidades**
-1. **Veículo**: Representa os diferentes tipos de veículos que podem utilizar o estacionamento.  
-   - **Atributos**: `id`, `tipo`, `placa`, `modelo`, `marca`, `planoMensal`
-2. **Estacionamento**: Representa o estacionamento em si.  
-   - **Atributos**: `id`, `nome`, `endereço`, `capacidade`
-3. **Vaga**: Representa uma vaga específica no estacionamento.  
-   - **Atributos**: `id`, `numero`, `tipoVaga` (moto, carro, caminhão), `disponibilidade`
-4. **Ticket**: Representa o ticket gerado para um veículo estacionado.  
-   - **Atributos**: `id`, `veiculoId`, `vagaId`, `horaEntrada`, `horaSaida`, `valor`
-5. **Pagamento**: Representa o pagamento realizado pelo uso do estacionamento.  
-   - **Atributos**: `id`, `ticketId`, `valor`, `dataPagamento`, `metodoPagamento`
-
-### **Relacionamentos**
-- **Veículo** tem muitos **Tickets** (um para cada entrada no estacionamento).
-- **Estacionamento** tem muitas **Vagas**.
-- **Vaga** pode ter muitos **Tickets** (mas apenas um ativo por vez).
-- **Ticket** pertence a um **Veículo** e uma **Vaga**.
-- **Ticket** tem um **Pagamento**.
+1. O estacionamento é cadastrado com sua capacidade de vagas.
+2. Cada vaga é cadastrada individualmente, especificando o tipo de veículo que pode ocupá-la.
+3. Um cliente pode ser cadastrado e associar até 3 veículos.
+4. Tickets podem ser abertos para clientes esporádicos ou mensalistas.
+5. Ao fechar o ticket, é calculado o valor conforme tempo de permanência e tipo de veículo.
+6. O pagamento do ticket deve ser realizado antes de liberar a vaga.
+7. Clientes podem aderir a planos mensais conforme os tipos disponíveis.
 
 ---
 
-## 4. Endpoints
+## 3. Endpoints Disponíveis
 
-### **Veículos**
-- **Registrar Veículo**:  
-  `POST /api/veiculos`  
-  **Corpo**:  
+### **Cliente**
+
+- **Cadastrar Cliente**: `POST /api/clientes`
+
   ```json
   {
-    "placa": "abc-2345", 
+    "nome": "João Silva",
+    "cpf": "123.456.789-00",
+    "email": "joao@email.com",
+    "telefone": "11999999999"
+  }
+  ```
+
+- **Cadastrar Veículo**: `POST /api/clientes/{id}/veiculos`
+
+  **Moto:**
+
+  ```json
+  {
+    "placa": "XYZ-9876",
+    "veiculoTipo": "MOTO",
+    "modelo": "CG 160",
+    "marca": "Honda"
+  }
+  ```
+
+  **Carro:**
+
+  ```json
+  {
+    "placa": "ABC-1234",
+    "veiculoTipo": "CARRO",
     "modelo": "Corolla",
-    "marca": "Toyota", 
-    "veiculoTipo": "CARRO", 
-    "planoMensal": "false"
+    "marca": "Toyota"
   }
   ```
-- **Obter Veículo**:  
-  `GET /api/veiculos/{id}`
+
+  **Caminhão:**
+
+  ```json
+  {
+    "placa": "DEF-5678",
+    "veiculoTipo": "CAMINHAO",
+    "modelo": "Atego",
+    "marca": "Mercedes"
+  }
+  ```
+
 ### **Estacionamento**
-- **Registrar Estacionamento**:  
-  `POST /api/estacionamentos`  
-  **Corpo**:
+
+- **Cadastrar Estacionamento**: `POST /api/estacionamentos`
+
   ```json
   {
-    "nome": "Estacionamento do Zé",
-    "endereço": {
-        "rua": "Rua das Flores",
-        "numero": 123,
-        "bairro": "Centro",
-        "cidade": "São Paulo",
-        "estado": "SP",
-        "cep": "12345-678"},
+    "nome": "Estacionamento Centro",
+    "endereco": {
+      "rua": "Rua das Flores",
+      "numero": 123,
+      "bairro": "Centro",
+      "cidade": "São Paulo",
+      "estado": "SP",
+      "cep": "12345-678"
+    },
     "capacidade": 100
   }
   ```
-- **Listar Estacionamentos**:  
-  `GET /api/estacionamentos/listar`
 
+- **Cadastrar Vaga**: `POST /api/estacionamentos/{id}/vagas`
 
-- **Detalhar Estacionamento**:  
-  `GET /api/estacionamentos/{id}
+  **Moto:**
 
-
-- **Atualizar Estacionamento**:  
-  `POST /api/atualizar`
-
-  **Corpo**:
   ```json
   {
-    "id": "1",
-    "nome": "Estacionamento do Zé",
-    "endereço": {
-        "rua": "Rua das Flores",
-        "numero": 123,
-        "bairro": "Centro",
-        "cidade": "São Paulo",
-        "estado": "SP",
-        "cep": "12345-678"},
-    "capacidade": 100
+    "numeroVaga": "A1",
+    "veiculoTipo": "MOTO"
   }
   ```
----
-### **Vaga**
-- **Adicionar Vaga**:  
-  `POST /api/estacionamentos/{id}/vagas`  
-  **Corpo**:  
+
+  **Carro:**
+
   ```json
   {
-    "numero": 1,
-    "tipoVaga": "carro",
-    "disponibilidade": true
+    "numeroVaga": "B2",
+    "veiculoTipo": "CARRO"
   }
   ```
-- **Listar Vagas**:  
-  `GET /api/estacionamentos/{id}/vagas`
 
-### **Tickets**
-- **Gerar Ticket**:  
-  `POST /api/tickets`  
-  **Corpo**:  
+  **Caminhão:**
+
   ```json
   {
-    "veiculoId": 1,
-    "vagaId": 1,
-
+    "numeroVaga": "C3",
+    "veiculoTipo": "CAMINHAO"
   }
   ```
-- **Obter Ticket**:  
-  `GET /api/tickets/{id}`  
 
+### **Ticket**
 
-- **Fechar Ticket**:  
-  `PUT /api/tickets/saida`  
-  
-- **Corpo**:  
+- **Abrir Ticket**: `POST /api/tickets`
+
+  ```json
+  {
+    "estacionamentoId": 1,
+    "veiculo": {
+      "placa": "ABC-1234",
+      "veiculoTipo": "CARRO",
+      "modelo": "Corolla",
+      "marca": "Toyota"
+    }
+  }
+  ```
+
+- **Fechar Ticket**: `PUT /api/tickets/saida`
+
   ```json
   {
     "horaSaida": "2024-11-21T20:00:00"
   }
   ```
 
-### **Pagamentos**
-- **Registrar Pagamento**:  
-  `POST /api/pagamentos`  
-  **Corpo**:  
+### **Pagamento**
+
+- **Pagar Ticket**: `POST /api/pagamentos/ticket`
+
   ```json
   {
     "ticketId": 1,
-    "valor": 20.00,
-    "dataPagamento": "2024-11-21T20:30:00",
-    "metodoPagamento": "cartão"
+    "metodoPagamento": "CARTAO"
   }
   ```
-- **Listar todos pagamentos**:  
-  `GET /api/tickets/{id}`
----
 
-## 5. Regras de Negócios
-1. **Calcular Valor do Ticket**:  
-   O valor é calculado com base no tipo de veículo e o tempo de permanência.
-2. **Disponibilidade de Vagas**:  
-   Uma vaga só pode ser ocupada por um veículo de tipo correspondente e deve estar disponível.
-3. **Pagamento Obrigatório**:  
-   Um ticket deve ser pago antes de liberar a vaga para outro veículo.
-4. **Planos Mensais**:  
-   Um veículo registrado em um plano mensal terá acesso ilimitado durante o período contratado.
+- **Pagar Plano Mensal**: `POST /api/pagamentos/plano`
+
+  ```json
+  {
+    "clienteId": 1,
+    "metodoPagamento": "CARTAO",
+    "tipoPlano": "PREMIUM"
+  }
+  ```
+

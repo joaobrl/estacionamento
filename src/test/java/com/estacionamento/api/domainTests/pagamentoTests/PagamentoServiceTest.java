@@ -1,19 +1,19 @@
 package com.estacionamento.api.domainTests.pagamentoTests;
 
 import com.estacionamento.api.domain.cliente.Cliente;
-import com.estacionamento.api.domain.cliente.ClienteRepository;
+import com.estacionamento.api.repository.ClienteRepository;
 import com.estacionamento.api.domain.cliente.TipoPlano;
 import com.estacionamento.api.domain.estacionamento.Estacionamento;
-import com.estacionamento.api.domain.estacionamento.EstacionamentoRepository;
+import com.estacionamento.api.repository.EstacionamentoRepository;
 import com.estacionamento.api.domain.exceptions.RecursoNaoEncontradoException;
 import com.estacionamento.api.domain.exceptions.TicketJaPagoException;
 import com.estacionamento.api.domain.pagamento.Pagamento;
-import com.estacionamento.api.domain.pagamento.PagamentoRepository;
-import com.estacionamento.api.domain.pagamento.PagamentoService;
+import com.estacionamento.api.repository.PagamentoRepository;
+import com.estacionamento.api.service.PagamentoService;
 import com.estacionamento.api.domain.pagamento.dto.PagamentoPlanoMensalDto;
 import com.estacionamento.api.domain.pagamento.dto.PagamentoTicketDto;
 import com.estacionamento.api.domain.ticket.Ticket;
-import com.estacionamento.api.domain.ticket.TicketRepository;
+import com.estacionamento.api.repository.TicketRepository;
 import com.estacionamento.api.domain.vaga.Vaga;
 import com.estacionamento.api.utils.UtilsMock;
 import org.junit.jupiter.api.BeforeEach;

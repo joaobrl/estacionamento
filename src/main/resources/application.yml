@@ -1,17 +1,22 @@
 spring:
   datasource:
-    url: jdbc:postgresql://db:5432/estacionamento
-    username: root
-    password: 123
+    url: jdbc:postgresql://meu-banco-postgres.postgres.database.azure.com:5432/estacionamento_bd
+    username: joao_admin@estacionamento_db
+    password: Jv@31415
     driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
   jpa:
     hibernate:
       ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-server:
-  port: 8080
+  server:
+    port: 8080
   error:
     include-stacktrace: never
     include-message: always

@@ -14,7 +14,6 @@ import com.estacionamento.api.domain.ticket.Ticket;
 import com.estacionamento.api.domain.ticket.dto.TicketCreateDto;
 import com.estacionamento.api.domain.vaga.Vaga;
 import com.estacionamento.api.domain.vaga.dto.VagaCreateDto;
-import com.estacionamento.api.domain.vaga.dto.VagaDto;
 import com.estacionamento.api.domain.veiculo.Veiculo;
 import com.estacionamento.api.domain.veiculo.dto.VeiculoCreateDto;
 
