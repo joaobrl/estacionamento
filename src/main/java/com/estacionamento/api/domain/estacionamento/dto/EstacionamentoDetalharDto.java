@@ -21,7 +21,7 @@ public record EstacionamentoDetalharDto(
                 estacionamento.getEndereco(),
                 estacionamento.getCapacidade(),
                 estacionamento.getVagas().stream()
-                        .map(vaga -> new VagaDto(vaga.getNumeroVaga(), vaga.getVeiculoTipo(), vaga.getDisponibilidade()))
+                        .map(vaga -> new VagaDto(vaga.getNumeroVaga(), vaga.getVeiculoTipo(), vaga.getTipoVaga(), vaga.getDisponibilidade()))
                         .collect(Collectors.toList())
         );
     }

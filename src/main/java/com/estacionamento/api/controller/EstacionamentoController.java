@@ -1,5 +1,8 @@
 package com.estacionamento.api.controller;
 
+import com.estacionamento.api.domain.vaga.Vaga;
+import com.estacionamento.api.domain.vaga.dto.VagaListarDisponibilidadeDto;
+import com.estacionamento.api.domain.vaga.dto.VagaUpdateDto;
 import com.estacionamento.api.service.EstacionamentoService;
 import com.estacionamento.api.domain.estacionamento.dto.EstacionamentoCreateDto;
 import com.estacionamento.api.domain.estacionamento.dto.EstacionamentoDetalharDto;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/estacionamentos")
@@ -53,34 +57,26 @@ public class EstacionamentoController {
         return ResponseEntity.ok(new EstacionamentoDetalharDto(estacionamento));
     }
 
-    @GetMapping("/{id}/vagas/disponiveis")
-    public ResponseEntity<List<VagaDto>> listarVagasDisponiveis(@PathVariable Long id) {
-        var estacionamento = estacionamentoService.listarVagasDisponiveis(id);
-        return ResponseEntity.ok(estacionamento);
+    @GetMapping("/{id}/listar/vagas")
+    public ResponseEntity<List<VagaDto>> listarVagas(@PathVariable Long id, @RequestBody VagaListarDisponibilidadeDto filtro) {
+        var vagas = estacionamentoService.listarVagas(id, filtro);
+        var vagasDto = vagas.stream()
+                .map(VagaDto::new)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(vagasDto);
     }
 
-    @GetMapping("/{id}/vagas/disponiveis/{veiculoTipo}")
-    public ResponseEntity<List<VagaDto>> listarVagasDisponiveisPorVeiculo(@PathVariable Long id, @PathVariable String veiculoTipo) {
-        var estacionamneto = estacionamentoService.listarVagasDisponiveisPorVeiculo(id, veiculoTipo);
-        return ResponseEntity.ok(estacionamneto);
-    }
-
-    @GetMapping("/{id}/vagas/ocupadas")
-    public ResponseEntity<List<VagaDto>> listarVagasOcupadas(@PathVariable Long id) {
-        var estacionamento = estacionamentoService.listarVagasOcupadas(id);
-        return ResponseEntity.ok(estacionamento);
-    }
-
-    @GetMapping("/{id}/vagas/ocupadas/{veiculoTipo}")
-    public ResponseEntity<List<VagaDto>> listarVagasOcupadasPorVeiculo(@PathVariable Long id, @PathVariable String veiculoTipo) {
-        var estacionamento = estacionamentoService.listarVagasOcupadasPorVeiculo(id, veiculoTipo);
-        return ResponseEntity.ok(estacionamento);
-    }
-
-    @PutMapping("/atualizar")
+    @PutMapping("{id}/atualizar")
     @Transactional
-    public ResponseEntity atualizarEstacionamento(@RequestBody @Valid EstacionamentoUpdateDto dados) {
-        var estacionamento = estacionamentoService.atualizarEstacionamento(dados);
+    public ResponseEntity atualizarEstacionamento(@PathVariable Long id, @RequestBody @Valid EstacionamentoUpdateDto dados) {
+        var estacionamento = estacionamentoService.atualizarEstacionamento(id, dados);
         return ResponseEntity.ok(estacionamento);
+    }
+
+    @PutMapping("/{id}/atualizar/vaga")
+    @Transactional
+    public ResponseEntity<VagaDto> atualizarVaga(@PathVariable Long id, @RequestBody @Valid VagaUpdateDto vagaUpdateDto) {
+        var vagaAtualizada = estacionamentoService.atualizarVaga(id, vagaUpdateDto);
+        return ResponseEntity.ok(vagaAtualizada);
     }
 }

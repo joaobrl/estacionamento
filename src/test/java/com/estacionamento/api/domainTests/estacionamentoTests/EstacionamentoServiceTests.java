@@ -66,7 +66,7 @@ public class EstacionamentoServiceTests {
         when(estacionamentoRepository.findById(anyLong())).thenReturn(Optional.of(UtilsMock.estacionamentoMock()));
         when(estacionamentoRepository.save(any(Estacionamento.class))).thenReturn(UtilsMock.estacionamentoMock());
 
-        Estacionamento result = estacionamentoService.atualizarEstacionamento(estacionamentoUpdateDto);
+        Estacionamento result = estacionamentoService.atualizarEstacionamento(any(), estacionamentoUpdateDto);
 
         assertNotNull(result);
         verify(estacionamentoRepository, times(1)).save(any(Estacionamento.class));

@@ -1,6 +1,7 @@
 package com.estacionamento.api.domain.pagamento;
 
 import com.estacionamento.api.domain.cliente.Cliente;
+import com.estacionamento.api.domain.cliente.TipoContrato;
 import com.estacionamento.api.domain.estacionamento.Estacionamento;
 import com.estacionamento.api.domain.pagamento.dto.PagamentoPlanoMensalDto;
 import com.estacionamento.api.domain.pagamento.dto.PagamentoTicketDto;
@@ -43,6 +44,9 @@ public class Pagamento {
     @Enumerated(EnumType.STRING)
     private TipoPagamento tipoPagamento;
 
+    @Enumerated(EnumType.STRING)
+    private TipoContrato tipoContrato;
+
     private BigDecimal valor;
 
     @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
@@ -65,6 +69,7 @@ public class Pagamento {
         this.metodoPagamento = pagamentoPlanoMensalDto.metodoPagamento();
         this.tipoPagamento = TipoPagamento.PLANO_MENSAL;
         this.dataPagamento = LocalDateTime.now();
+        this.tipoContrato = pagamentoPlanoMensalDto.tipoContrato();
     }
 
     // Metodo para criar pagamento de Ticket

@@ -25,21 +25,21 @@ public class TicketService {
     public Ticket criarTicket(TicketCreateDto ticketCreateDto) {
         Cliente cliente = clienteService.findClienteByVeiculoPlaca(ticketCreateDto.veiculo().getPlaca()).orElse(null);
 
-        Ticket novoTicket = new Ticket();
-        novoTicket.setVeiculo(ticketCreateDto.veiculo());
+        Ticket novoticket = new Ticket();
+        novoticket.setVeiculo(ticketCreateDto.veiculo());
 
-        ticketValidationService.validateCriarTicket(novoTicket);
+        ticketValidationService.validateCriarTicket(novoticket);
 
         clienteValidationService.validarPlanoMensalParaCaminhao(ticketCreateDto, cliente);
 
         Estacionamento estacionamento = estacionamentoService.findEstacionamentoById(ticketCreateDto.estacionamentoId());
         Vaga vagaDisponivel = estacionamentoService.verificarDisponibilidadeVaga(estacionamento, ticketCreateDto.veiculo());
-        novoTicket = new Ticket(estacionamento, vagaDisponivel.getNumeroVaga(), ticketCreateDto.veiculo());
+        novoticket = new Ticket(estacionamento, vagaDisponivel.getNumeroVaga(), ticketCreateDto.veiculo());
 
         vagaDisponivel.ocuparVaga();
         estacionamentoService.saveEstacionamento(estacionamento);
 
-        return ticketRepository.save(novoTicket);
+        return ticketRepository.save(novoticket);
     }
 
     public Ticket buscarTicketPorId(Long id) {

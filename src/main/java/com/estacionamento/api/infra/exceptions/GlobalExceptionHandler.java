@@ -23,11 +23,13 @@ public class GlobalExceptionHandler {
         var erros = ex.getFieldErrors();
         return ResponseEntity.badRequest().body(erros.stream().map(ValidacaoErroDto::new).toList());
     }
+
     // Exception para quando o recurso (id) não é encontrado
     @ExceptionHandler(RecursoNaoEncontradoException.class)
     public ResponseEntity<?> handleRecursoNaoEncontradoException(RecursoNaoEncontradoException ex) {
         return buildErrorResponse(HttpStatus.NOT_FOUND, ex.getMessage());
     }
+
     // Exception para quando o estacionamento estiver com a capacidade maxima de vagas
     @ExceptionHandler(EstacionamentoLotadoException.class)
     public ResponseEntity<?> handleEstacionamentoLotadoException(EstacionamentoLotadoException ex) {
@@ -67,6 +69,12 @@ public class GlobalExceptionHandler {
     // Exception para quando o ticket já foi pago.
     @ExceptionHandler(TicketJaPagoException.class)
     public ResponseEntity<?> handleTicketJaPagoException(TicketJaPagoException ex) {
+        return buildErrorResponse(HttpStatus.CONFLICT, ex.getMessage());
+    }
+
+    // Exception para quando a vaga não pode ser atualizada
+    @ExceptionHandler(AtualizacaoIndiposnivelException.class)
+    public ResponseEntity<?> handleAtualizacaoIndiposnivelException(AtualizacaoIndiposnivelException ex) {
         return buildErrorResponse(HttpStatus.CONFLICT, ex.getMessage());
     }
 

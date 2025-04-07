@@ -1,5 +1,6 @@
 package com.estacionamento.api.domain.pagamento.dto;
 
+import com.estacionamento.api.domain.cliente.TipoContrato;
 import com.estacionamento.api.domain.pagamento.MetodoPagamento;
 import com.estacionamento.api.domain.pagamento.Pagamento;
 import com.estacionamento.api.domain.pagamento.TipoPagamento;
@@ -12,6 +13,7 @@ public record PagamentoReciboDto(
         Long clienteId,
         MetodoPagamento metodoPagamento,
         TipoPagamento tipoPagamento,
+        TipoContrato tipoContrato,
         BigDecimal valor,
         LocalDateTime dataPagamento
 ) {
@@ -21,6 +23,7 @@ public record PagamentoReciboDto(
                 pagamento.getCliente().getId(),
                 pagamento.getMetodoPagamento(),
                 pagamento.getTipoPagamento(),
+                pagamento.getTipoContrato(),
                 pagamento.getValor(),
                 pagamento.getDataPagamento()
         );

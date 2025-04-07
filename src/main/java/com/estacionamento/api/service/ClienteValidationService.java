@@ -12,7 +12,7 @@ public class ClienteValidationService {
 
     public void validarPlanoMensalParaCaminhao(TicketCreateDto ticketCreateDto, Cliente cliente) {
         if (ticketCreateDto.veiculo().getVeiculoTipo() == VeiculoTipo.CAMINHAO) {
-            if (cliente == null || cliente.getTipoPlano() == null || !cliente.getTipoPlano().equals(TipoPlano.CAMINHAO_ESPECIAL)) {
+            if (cliente == null || cliente.getTipoPlano() == null || !cliente.getTipoPlano().equals(TipoPlano.ESPECIAL)) {
                 throw new PlanoMensalObrigatorioException();
             }
         }

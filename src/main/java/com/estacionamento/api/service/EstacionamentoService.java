@@ -8,6 +8,8 @@ import com.estacionamento.api.domain.exceptions.VagaNaoDisponivelException;
 import com.estacionamento.api.domain.vaga.Vaga;
 import com.estacionamento.api.domain.vaga.dto.VagaCreateDto;
 import com.estacionamento.api.domain.vaga.dto.VagaDto;
+import com.estacionamento.api.domain.vaga.dto.VagaListarDisponibilidadeDto;
+import com.estacionamento.api.domain.vaga.dto.VagaUpdateDto;
 import com.estacionamento.api.domain.veiculo.Veiculo;
 import com.estacionamento.api.domain.veiculo.VeiculoTipo;
 import com.estacionamento.api.repository.EstacionamentoRepository;
@@ -47,71 +49,40 @@ public class EstacionamentoService {
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Estacionamento", id));
     }
 
+    public List<Vaga> listarVagas(Long estacionamentoId, VagaListarDisponibilidadeDto filtro) {
+        return estacionamentoRepository.findVagasByFilters(estacionamentoId,
+                filtro.disponibilidade(),
+                filtro.tipoVaga(),
+                filtro.veiculoTipo());
+    }
 
     @Transactional
-    public Estacionamento atualizarEstacionamento(EstacionamentoUpdateDto dados) {
-        var estacionamento = estacionamentoRepository.findById(dados.id())
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Estacionamento", dados.id()));
+    public Estacionamento atualizarEstacionamento(Long estacionamentoId, EstacionamentoUpdateDto dados) {
+        var estacionamento = estacionamentoRepository.findById(estacionamentoId)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Estacionamento", estacionamentoId));
         estacionamento.atualizar(dados);
         return estacionamentoRepository.save(estacionamento);
     }
 
-    public List<VagaDto> listarVagasDisponiveis(Long id) {
+    @Transactional
+    public VagaDto atualizarVaga(Long estacionamentoId, VagaUpdateDto vagaUpdateDto) {
+        var estacionamento = estacionamentoRepository.findById(estacionamentoId)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Estacionamento", estacionamentoId));
 
-        Estacionamento estacionamento = estacionamentoRepository.findEstacionamentoComVagasDisponiveis(id)
-                .stream()
+        var vaga = estacionamento.getVagas().stream()
+                .filter(v -> v.getNumeroVaga().equals(vagaUpdateDto.numeroVaga()))
                 .findFirst()
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Estacionamento", id));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Vaga", vagaUpdateDto.numeroVaga()));
 
-        return estacionamento.getVagas()
-                .stream()
-                .filter(Vaga::getDisponibilidade)
-                .map(vaga -> new VagaDto(vaga.getNumeroVaga(), vaga.getVeiculoTipo(), vaga.getDisponibilidade()))
-                .collect(Collectors.toList());
-    }
+        if (!vaga.getDisponibilidade()) {
+            throw new VagaNaoDisponivelException();
+        }
 
-    public List<VagaDto> listarVagasOcupadas(Long id) {
-        Estacionamento estacionamento = estacionamentoRepository.findEstacionamentoComVagasOcupadas(id)
-                .stream()
-                .findFirst()
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Estacionamento", id));
+        vaga.atualizar(vagaUpdateDto);
 
-        return estacionamento.getVagas().stream()
-                .filter(vaga -> !vaga.getDisponibilidade())
-                .map(vaga -> new VagaDto(vaga.getNumeroVaga(), vaga.getVeiculoTipo(), vaga.getDisponibilidade()))
-                .collect(Collectors.toList());
-    }
+        estacionamentoRepository.save(estacionamento);
 
-    public List<VagaDto> listarVagasDisponiveisPorVeiculo(Long id, String veiculoTipo) {
-        VeiculoTipo tipoVeiculoEnum = VeiculoTipo.valueOf(veiculoTipo.toUpperCase());
-
-        List<Estacionamento> estacionamentos = estacionamentoRepository.findEstacionamentoComVagasDisponiveisPorTipoVeiculo(id, tipoVeiculoEnum);
-
-        Estacionamento estacionamento = estacionamentos
-                .stream()
-                .findFirst()
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Estacionamento", id));
-
-        return estacionamento.getVagas().stream()
-                .filter(vaga -> vaga.getDisponibilidade() && vaga.getVeiculoTipo() == tipoVeiculoEnum)
-                .map(vaga -> new VagaDto(vaga.getNumeroVaga(), vaga.getVeiculoTipo(), vaga.getDisponibilidade()))
-                .collect(Collectors.toList());
-    }
-
-    public List<VagaDto> listarVagasOcupadasPorVeiculo(Long id, String veiculoTipo) {
-        VeiculoTipo tipoVeiculoEnum = VeiculoTipo.valueOf(veiculoTipo.toUpperCase());
-
-        List<Estacionamento> estacionamentos = estacionamentoRepository.findEstacionamentoComVagasOcupadasPorTipoVeiculo(id, tipoVeiculoEnum);
-
-        Estacionamento estacionamento = estacionamentos
-                .stream()
-                .findFirst()
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Estacionamento", id));
-
-        return estacionamento.getVagas().stream()
-                .filter(vaga -> !vaga.getDisponibilidade() && vaga.getVeiculoTipo() == tipoVeiculoEnum)
-                .map(vaga -> new VagaDto(vaga.getNumeroVaga(), vaga.getVeiculoTipo(), vaga.getDisponibilidade()))
-                .collect(Collectors.toList());
+        return new VagaDto(vaga);
     }
 
     public Estacionamento findEstacionamentoById(Long id) {

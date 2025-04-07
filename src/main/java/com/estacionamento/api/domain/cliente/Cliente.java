@@ -5,6 +5,7 @@ import com.estacionamento.api.domain.cliente.dto.ClienteUpdateDto;
 import com.estacionamento.api.domain.veiculo.Veiculo;
 import com.estacionamento.api.domain.veiculo.dto.VeiculoCreateDto;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.estacionamento.api.util.Util;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -31,6 +32,9 @@ public class Cliente {
     private String cpf;
 
     @Column(unique = true)
+    private String matricula;
+
+    @Column(unique = true)
     private String email;
 
     @Column(unique = true)
@@ -48,13 +52,12 @@ public class Cliente {
     @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
     private LocalDateTime validadePlanoMensal;
 
-    private Boolean renovacaoAutomaticaPlano;
-
     public Cliente(ClienteCreateDto clienteCreateDto) {
         this.nome = clienteCreateDto.nome();
         this.cpf = clienteCreateDto.cpf();
         this.email = clienteCreateDto.email();
         this.telefone = clienteCreateDto.telefone();
+        this.matricula = Util.gerarMatricula(clienteCreateDto.cpf(), this.id);
     }
 
     // Método para adicionar veículo

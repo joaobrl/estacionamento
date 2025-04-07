@@ -1,10 +1,12 @@
 package com.estacionamento.api.service;
 
 import com.estacionamento.api.domain.cliente.Cliente;
+import com.estacionamento.api.domain.cliente.TipoContrato;
 import com.estacionamento.api.domain.cliente.TipoPlano;
 import com.estacionamento.api.domain.cliente.dto.ClienteCreateDto;
 import com.estacionamento.api.domain.cliente.dto.ClienteUpdateDto;
 import com.estacionamento.api.domain.exceptions.RecursoNaoEncontradoException;
+import com.estacionamento.api.domain.pagamento.dto.PagamentoPlanoMensalDto;
 import com.estacionamento.api.domain.veiculo.Veiculo;
 import com.estacionamento.api.repository.ClienteRepository;
 import lombok.RequiredArgsConstructor;
@@ -65,16 +67,17 @@ public class ClienteService {
         return clienteRepository.save(cliente);
     }
 
-    public void atualizarPlanoMensal(Cliente cliente, TipoPlano tipoPlano, boolean renovacaoAutomatica) {
+    public void atualizarPlanoMensal(PagamentoPlanoMensalDto pagamentoPlanoMensalDto) {
+        var cliente = findClienteById(pagamentoPlanoMensalDto.clienteId());
+
         if (cliente.getPlanoMensalAtivo() != null && cliente.getPlanoMensalAtivo()) {
-            cliente.setValidadePlanoMensal(cliente.getValidadePlanoMensal().plusMonths(1));
+            cliente.setValidadePlanoMensal(cliente.getValidadePlanoMensal().plusMonths(pagamentoPlanoMensalDto.tipoContrato().getMeses()));
         } else {
-            cliente.setValidadePlanoMensal(LocalDateTime.now().plusMonths(1));
+            cliente.setValidadePlanoMensal(LocalDateTime.now().plusMonths(pagamentoPlanoMensalDto.tipoContrato().getMeses()));
         }
 
         cliente.setPlanoMensalAtivo(true);
-        cliente.setTipoPlano(tipoPlano);
-        cliente.setRenovacaoAutomaticaPlano(renovacaoAutomatica);
+        cliente.setTipoPlano(pagamentoPlanoMensalDto.tipoPlano());
 
         clienteRepository.save(cliente);
     }
