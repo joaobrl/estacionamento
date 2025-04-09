@@ -14,10 +14,8 @@ public record ClienteListDto(
         String cpf,
         String email,
         String telefone,
-        List<VeiculoListDto> veiculos,
         Boolean planoMensalAtivo,
         TipoPlano tipoPlano,
-        Boolean renavacaoAutomaticaPlano,
         LocalDateTime validadePlanoMensal
 ) {
     public ClienteListDto(Cliente cliente) {
@@ -27,16 +25,8 @@ public record ClienteListDto(
                 cliente.getCpf(),
                 cliente.getEmail(),
                 cliente.getTelefone(),
-                cliente.getVeiculos().stream()
-                        .map(veiculo -> new VeiculoListDto (
-                                veiculo.getPlaca(),
-                                veiculo.getVeiculoTipo(),
-                                veiculo.getMarca(),
-                                veiculo.getModelo()))
-                        .collect(Collectors.toList()),
                 cliente.getPlanoMensalAtivo(),
                 cliente.getTipoPlano(),
-                cliente.getRenovacaoAutomaticaPlano(),
                 cliente.getValidadePlanoMensal());
     }
 }

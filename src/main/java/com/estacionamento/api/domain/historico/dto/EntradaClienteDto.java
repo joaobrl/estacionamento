@@ -1,12 +1,14 @@
-package com.estacionamento.api.domain.ticket.dto;
+package com.estacionamento.api.domain.historico.dto;
 
 import com.estacionamento.api.domain.veiculo.Veiculo;
 import jakarta.validation.constraints.NotNull;
 
-public record TicketCreateDto(
+public record EntradaClienteDto(
         @NotNull
         Long estacionamentoId,
         @NotNull
-        Veiculo veiculo
+        Veiculo veiculo,
+        String matricula
+
 ) {
 }

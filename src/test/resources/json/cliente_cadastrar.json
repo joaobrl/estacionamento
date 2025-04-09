@@ -1,0 +1,22 @@
+{
+  "nome": "João Silva",
+  "cpf": "123.456.789-00",
+  "email": "joao.silva@email.com",
+  "telefone": "11999999999",
+  "endereco": {
+    "rua": "Rua Exemplo",
+    "numero": "123",
+    "bairro": "Centro",
+    "cidade": "São Paulo",
+    "estado": "SP",
+    "cep": "12345-678"
+  },
+  "veiculos": [
+    {
+      "placa": "ABC1234",
+      "tipo": "CARRO",
+      "modelo": "Uno",
+      "marca": "Fiat"
+    }
+  ]
+}

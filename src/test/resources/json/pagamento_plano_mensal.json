@@ -1,0 +1,6 @@
+{
+  "clienteId": 123,
+  "metodoPagamento": "PIX",
+  "tipoPlano": "ESPECIAL",
+  "tipoContrato": "MENSAL"
+}

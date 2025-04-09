@@ -1,7 +1,7 @@
 package com.estacionamento.api.controller;
 
 import com.estacionamento.api.service.TicketService;
-import com.estacionamento.api.domain.ticket.dto.TicketCreateDto;
+import com.estacionamento.api.domain.historico.dto.EntradaClienteDto;
 import com.estacionamento.api.domain.ticket.dto.TicketListDto;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -16,16 +16,10 @@ public class TicketController {
     @Autowired
     private TicketService ticketService;
 
-    @PostMapping
-    @Transactional
-    public ResponseEntity abrirTicket (@RequestBody @Valid TicketCreateDto dados, UriComponentsBuilder uriBuilder) {
-        var ticket = ticketService.criarTicket(dados);
-        var uri = uriBuilder.path("/tickets/{id}").buildAndExpand(ticket.getId()).toUri();
-        return ResponseEntity.created(uri).body(new TicketListDto(ticket));
-    }
+
 
     @GetMapping("/{id}")
-    public ResponseEntity listar(@PathVariable Long id) {
+    public ResponseEntity listarTicket(@PathVariable Long id) {
         var ticket = ticketService.buscarTicketPorId(id);
         return ResponseEntity.ok(new TicketListDto(ticket));
     }

@@ -18,11 +18,6 @@ public class PlanoValidacaoStrategy implements Validacao {
             throw new IllegalArgumentException("Cliente sem plano mensal ativo não deve ter data de validade do plano");
         }
 
-        // Verificação 3: Cliente sem plano mensal ativo e com renovação automática configurada
-        if (!cliente.getPlanoMensalAtivo() && cliente.getRenovacaoAutomaticaPlano()) {
-            throw new IllegalArgumentException("Cliente sem plano mensal ativo não deve ter renovação automática do plano");
-        }
-
         // Verificação 4: Verificar se a data de validade do plano já venceu
         if (cliente.getPlanoMensalAtivo() && cliente.getValidadePlanoMensal() != null) {
             if (cliente.getValidadePlanoMensal().isBefore(LocalDateTime.now())) {

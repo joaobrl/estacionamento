@@ -2,6 +2,8 @@ package com.estacionamento.api.domain.cliente;
 
 import com.estacionamento.api.domain.cliente.dto.ClienteCreateDto;
 import com.estacionamento.api.domain.cliente.dto.ClienteUpdateDto;
+import com.estacionamento.api.domain.historico.MovimentacaoClientePlano;
+import com.estacionamento.api.domain.vaga.Vaga;
 import com.estacionamento.api.domain.veiculo.Veiculo;
 import com.estacionamento.api.domain.veiculo.dto.VeiculoCreateDto;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -31,7 +33,7 @@ public class Cliente {
     @Column(unique = true)
     private String cpf;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String matricula;
 
     @Column(unique = true)
@@ -39,10 +41,6 @@ public class Cliente {
 
     @Column(unique = true)
     private String telefone;
-
-    @ElementCollection
-    @CollectionTable(name = "veiculos", joinColumns = @JoinColumn(name = "cliente_id"))
-    private List<Veiculo> veiculos = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     private TipoPlano tipoPlano;
@@ -52,32 +50,17 @@ public class Cliente {
     @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
     private LocalDateTime validadePlanoMensal;
 
+    @ElementCollection
+    @CollectionTable(name = "movimentacaoClientePlano", joinColumns = @JoinColumn(name = "movimentacaoClientePlano_matricula"))
+    private List<MovimentacaoClientePlano> movimentacaoClientePlano = new ArrayList<>();
+
     public Cliente(ClienteCreateDto clienteCreateDto) {
         this.nome = clienteCreateDto.nome();
         this.cpf = clienteCreateDto.cpf();
         this.email = clienteCreateDto.email();
         this.telefone = clienteCreateDto.telefone();
         this.matricula = Util.gerarMatricula(clienteCreateDto.cpf(), this.id);
-    }
-
-    // Método para adicionar veículo
-    public void adicionarVeiculo (VeiculoCreateDto veiculoCreateDto) {
-        boolean veiculoExistente = veiculos.stream()
-                .anyMatch(v -> v.getPlaca().equals(veiculoCreateDto.placa()));
-        if (veiculoExistente) {
-            throw new IllegalArgumentException("Veiculo já cadastrado");
-        }
-
-        if (veiculos.size() >= 3) {
-            throw new IllegalStateException("Capacidade máxima de veículos atingida");
-        }
-
-        Veiculo novoVeiculo = new Veiculo(veiculoCreateDto);
-        this.veiculos.add(novoVeiculo);
-    }
-
-    public void removerVeiculo(String placa) {
-        veiculos.removeIf(veiculo -> veiculo.getPlaca().equals(placa));
+        this.movimentacaoClientePlano = new ArrayList<>();
     }
 
     // Método para atualizar informações do cliente

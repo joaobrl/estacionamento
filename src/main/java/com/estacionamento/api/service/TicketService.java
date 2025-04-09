@@ -4,7 +4,7 @@ import com.estacionamento.api.domain.cliente.Cliente;
 import com.estacionamento.api.domain.estacionamento.Estacionamento;
 import com.estacionamento.api.domain.exceptions.RecursoNaoEncontradoException;
 import com.estacionamento.api.domain.ticket.Ticket;
-import com.estacionamento.api.domain.ticket.dto.TicketCreateDto;
+import com.estacionamento.api.domain.historico.dto.EntradaClienteDto;
 import com.estacionamento.api.domain.vaga.Vaga;
 import com.estacionamento.api.repository.TicketRepository;
 import jakarta.transaction.Transactional;
@@ -22,19 +22,19 @@ public class TicketService {
     private final ClienteValidationService clienteValidationService;
 
     @Transactional
-    public Ticket criarTicket(TicketCreateDto ticketCreateDto) {
-        Cliente cliente = clienteService.findClienteByVeiculoPlaca(ticketCreateDto.veiculo().getPlaca()).orElse(null);
+    public Ticket criarTicket(EntradaClienteDto entradaClienteDto) {
+        Cliente cliente = clienteService.findClienteByVeiculoPlaca(entradaClienteDto.veiculo().getPlaca()).orElse(null);
 
         Ticket novoticket = new Ticket();
-        novoticket.setVeiculo(ticketCreateDto.veiculo());
+        novoticket.setVeiculo(entradaClienteDto.veiculo());
 
         ticketValidationService.validateCriarTicket(novoticket);
 
-        clienteValidationService.validarPlanoMensalParaCaminhao(ticketCreateDto, cliente);
+        clienteValidationService.validarPlanoMensalParaCaminhao(entradaClienteDto, cliente);
 
-        Estacionamento estacionamento = estacionamentoService.findEstacionamentoById(ticketCreateDto.estacionamentoId());
-        Vaga vagaDisponivel = estacionamentoService.verificarDisponibilidadeVaga(estacionamento, ticketCreateDto.veiculo());
-        novoticket = new Ticket(estacionamento, vagaDisponivel.getNumeroVaga(), ticketCreateDto.veiculo());
+        var estacionamento = estacionamentoService.findEstacionamentoById(entradaClienteDto.estacionamentoId());
+        Vaga vagaDisponivel = estacionamentoService.verificarDisponibilidadeVaga(estacionamento, entradaClienteDto.veiculo());
+        novoticket = new Ticket(estacionamento, vagaDisponivel.getNumeroVaga(), entradaClienteDto.veiculo());
 
         vagaDisponivel.ocuparVaga();
         estacionamentoService.saveEstacionamento(estacionamento);

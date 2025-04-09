@@ -1,68 +1,93 @@
 package com.estacionamento.api.service;
 
 import com.estacionamento.api.domain.cliente.Cliente;
-import com.estacionamento.api.domain.estacionamento.Estacionamento;
-import com.estacionamento.api.domain.exceptions.RecursoNaoEncontradoException;
+import com.estacionamento.api.domain.historico.MovimentacaoClientePlano;
+import com.estacionamento.api.domain.historico.dto.EntradaClienteDto;
+import com.estacionamento.api.domain.historico.dto.SaidaClienteDto;
 import com.estacionamento.api.domain.ticket.Ticket;
-import com.estacionamento.api.domain.ticket.dto.TicketCreateDto;
 import com.estacionamento.api.domain.vaga.Vaga;
-import com.estacionamento.api.repository.TicketRepository;
+import com.estacionamento.api.repository.ClienteRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 public class MovimentacaoService {
-    private final TicketRepository ticketRepository;
+
+
     private final EstacionamentoService estacionamentoService;
     private final ClienteService clienteService;
     private final TicketValidationService ticketValidationService;
     private final ClienteValidationService clienteValidationService;
+    private final TicketService ticketService;
+    private final ClienteRepository clienteRepository;
+
 
     @Transactional
-    public Ticket registrarEntrada(TicketCreateDto ticketCreateDto, String matricula) {
-        Cliente cliente = clienteService.findClienteByVeiculoPlaca(ticketCreateDto.veiculo().getPlaca()).orElse(null);
+    public MovimentacaoClientePlano registrarEntrada(EntradaClienteDto entradaClienteDto) {
+        var cliente = clienteService.buscarPorMatricula(entradaClienteDto.matricula());
 
-        if (matricula != null ) {
+        // Verificar se o plano ativo do cliente é compatível com o veículo
+        clienteValidationService.validarPlanoMensalParaCaminhao(entradaClienteDto, cliente);
 
-            if (!cliente.getPlanoMensalAtivo()) {
-                throw new IllegalArgumentException("Matrícula inválida para o cliente com assinatura de plano.");
-            }
-
-            // se o veiculo for caminhão, verificar se o cliente tem plano mensal compativel
-
-            //validar hora de entrada e tipo de plano
-
-            // validar se o veículo já está com o ticket aberto
-
-
-        } else {
-            // Cliente esporádico, gera ticket
-            Ticket novoticket = new Ticket();
-            novoticket.setVeiculo(ticketCreateDto.veiculo());
-
-            ticketValidationService.validateCriarTicket(novoticket);
-
-            clienteValidationService.validarPlanoMensalParaCaminhao(ticketCreateDto, cliente);
-
-            Estacionamento estacionamento = estacionamentoService.findEstacionamentoById(ticketCreateDto.estacionamentoId());
-            Vaga vagaDisponivel = estacionamentoService.verificarDisponibilidadeVaga(estacionamento, ticketCreateDto.veiculo());
-            novoticket = new Ticket(estacionamento, vagaDisponivel.getNumeroVaga(), ticketCreateDto.veiculo());
-
-            vagaDisponivel.ocuparVaga();
-            estacionamentoService.saveEstacionamento(estacionamento);
-
-            return ticketRepository.save(novoticket);
+        // Verificar se o veículo já possui um ticket em aberto
+        Ticket novoticket = new Ticket();
+        novoticket.setVeiculo(entradaClienteDto.veiculo());
+        if (ticketValidationService.validateCriarTicket(novoticket)) {
+            throw new IllegalArgumentException("O veículo já possui um ticket em aberto.");
         }
+
+        // Abrir um ticket caso o cliente não possua plano ativo ou já tenha um veículo no estacionamento
+        if (!clienteValidationService.isPlanoAtivo(cliente) || clienteValidationService.isClienteComVeiculoNoEstacionamento(entradaClienteDto.matricula())) {
+            ticketService.criarTicket(entradaClienteDto);
+        }
+
+        // Caso todas as validações sejam atendidas, registrar a entrada
+        return processarEntradaComMatricula(entradaClienteDto);
     }
 
     @Transactional
-    public void registrarSaida(Long ticketId) {
-        Ticket ticket = ticketRepository.findById(ticketId)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Ticket", ticketId));
-        ticket.setHoraSaida(LocalDateTime.now());
-        ticket.setPago(true);
-        ticketRepository.save(ticket);
+    private MovimentacaoClientePlano processarEntradaComMatricula(EntradaClienteDto entradaClienteDto) {
+        // Buscar o cliente pela matrícula
+        var cliente = clienteService.buscarPorMatricula(entradaClienteDto.matricula());
+
+
+        MovimentacaoClientePlano novaMovimentacao = new MovimentacaoClientePlano();
+        novaMovimentacao.setVeiculo(entradaClienteDto.veiculo());
+
+        var estacionamento = estacionamentoService.findEstacionamentoById(entradaClienteDto.estacionamentoId());
+        Vaga vagaDisponivel = estacionamentoService.verificarDisponibilidadeVaga(estacionamento, entradaClienteDto.veiculo());
+
+        // Criar uma nova movimentação
+        MovimentacaoClientePlano movimentacao = new MovimentacaoClientePlano();
+        movimentacao.setCliente(cliente);
+        movimentacao.setEstacionamento(estacionamento);
+        movimentacao.setVeiculo(entradaClienteDto.veiculo());
+        movimentacao.setNumeroVaga(vagaDisponivel.getNumeroVaga());
+        movimentacao.setHoraEntrada(LocalDateTime.now());
+
+        // Adicionar a movimentação à lista do cliente
+        cliente.getMovimentacaoClientePlano().add(movimentacao);
+
+        // Ocupar a vaga e salvar o estado do estacionamento
+        vagaDisponivel.ocuparVaga();
+        estacionamentoService.saveEstacionamento(estacionamento);
+
+        clienteRepository.save(cliente);
+        return movimentacao;
+
+    }
+
+    @Transactional
+    public MovimentacaoClientePlano registrarSaida(SaidaClienteDto saidaClienteDto) {
+        var movimentacaoAtiva = clienteRepository.findMovimentacaoAtivaByMatricula(saidaClienteDto.matricula())
+                .orElseThrow(() -> new IllegalArgumentException("Nenhuma movimentação ativa encontrada para o cliente."));
+
+        movimentacaoAtiva.setHoraSaida(LocalDateTime.now());
+        clienteRepository.save(movimentacaoAtiva.getCliente());
+        return movimentacaoAtiva;
     }
 }

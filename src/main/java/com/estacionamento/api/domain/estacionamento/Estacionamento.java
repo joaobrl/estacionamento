@@ -5,7 +5,6 @@ import com.estacionamento.api.domain.estacionamento.dto.EstacionamentoCreateDto;
 import com.estacionamento.api.domain.estacionamento.dto.EstacionamentoUpdateDto;
 import com.estacionamento.api.domain.exceptions.EstacionamentoLotadoException;
 import com.estacionamento.api.domain.exceptions.VagaComNumeroJaExistenteException;
-import com.estacionamento.api.domain.vaga.TipoVaga;
 import com.estacionamento.api.domain.vaga.Vaga;
 import com.estacionamento.api.domain.vaga.dto.VagaCreateDto;
 import jakarta.persistence.*;
@@ -13,7 +12,6 @@ import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "estacionamentos")

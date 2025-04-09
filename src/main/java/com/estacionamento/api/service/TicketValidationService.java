@@ -13,12 +13,13 @@ public class TicketValidationService {
 
     private final List<TicketValidationStrategy> validationStrategies;
 
-    public void validateCriarTicket(Ticket ticket) {
+    public boolean validateCriarTicket(Ticket ticket) {
         for (TicketValidationStrategy strategy : validationStrategies) {
             if (strategy.supports("criarTicket")) {
                 strategy.validate(ticket);
             }
         }
+        return false;
     }
 
     public void validateFecharTicket(Ticket ticket) {

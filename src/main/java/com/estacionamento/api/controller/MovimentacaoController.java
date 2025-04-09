@@ -1,8 +1,14 @@
 package com.estacionamento.api.controller;
 
-import com.estacionamento.api.domain.ticket.dto.TicketCreateDto;
+import com.estacionamento.api.domain.cliente.Cliente;
+import com.estacionamento.api.domain.historico.MovimentacaoClientePlano;
+import com.estacionamento.api.domain.historico.dto.ClienteMensalistaDto;
+import com.estacionamento.api.domain.historico.dto.EntradaClienteDto;
+import com.estacionamento.api.domain.historico.dto.SaidaClienteDto;
+import com.estacionamento.api.domain.ticket.Ticket;
 import com.estacionamento.api.domain.ticket.dto.TicketListDto;
 import com.estacionamento.api.service.MovimentacaoService;
+import com.estacionamento.api.service.TicketService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,23 +22,33 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class MovimentacaoController {
 
     private final MovimentacaoService movimentacaoService;
+    private final TicketService ticketService;
 
     @PostMapping("/entrada")
-    @Transactional
-    public ResponseEntity registrarEntrada(@RequestBody @Valid TicketCreateDto dados, @RequestParam(required = false) String matricula, UriComponentsBuilder uriBuilder) {
-        var ticket = movimentacaoService.registrarEntrada(dados, matricula);
-        if (ticket == null) {
-            return ResponseEntity.ok("Cliente com assinatura de plano, entrada registrada sem gerar ticket.");
+    public ResponseEntity<?> registrarEntrada(@RequestBody @Valid EntradaClienteDto entradaClienteDto, UriComponentsBuilder uriBuilder) {
+
+        if (entradaClienteDto.matricula() != null && !entradaClienteDto.matricula().isBlank()) {
+            var mensalista = movimentacaoService.registrarEntrada(entradaClienteDto);
+            var uri = uriBuilder.path("/mensalistas/{id}").buildAndExpand(mensalista).toUri();
+            return ResponseEntity.created(uri).body(new ClienteMensalistaDto(mensalista));
+        } else {
+            var ticket = ticketService.criarTicket(entradaClienteDto);
+            var uri = uriBuilder.path("/tickets/{id}").buildAndExpand(ticket.getId()).toUri();
+            return ResponseEntity.created(uri).body(new TicketListDto(ticket));
         }
-        var uri = uriBuilder.path("/tickets/{id}").buildAndExpand(ticket.getId()).toUri();
-        return ResponseEntity.created(uri).body(new TicketListDto(ticket));
     }
 
-    @PostMapping("/saida/{ticketId}")
+    @PatchMapping("/saida")
     @Transactional
-    public ResponseEntity registrarSaida(@PathVariable Long ticketId) {
-        movimentacaoService.registrarSaida(ticketId);
-        return ResponseEntity.ok("Saída registrada com sucesso.");
+    public ResponseEntity registrarSaida(@PathVariable SaidaClienteDto saidaClienteDto) {
+        var saida = movimentacaoService.registrarSaida(saidaClienteDto);
+        return ResponseEntity.ok(new ClienteMensalistaDto (saida));
+    }
+
+    @GetMapping("/ticket/{id}")
+    public ResponseEntity listarTicket(@PathVariable Long id) {
+        var ticket = ticketService.buscarTicketPorId(id);
+        return ResponseEntity.ok(new TicketListDto(ticket));
     }
 
 }

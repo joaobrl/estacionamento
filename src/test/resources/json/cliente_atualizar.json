@@ -1,0 +1,13 @@
+{
+  "nome": "João Silva Santos",
+  "email": "joao.silva.santos@email.com",
+  "telefone": "11988888888",
+  "endereco": {
+    "rua": "Rua Nova",
+    "numero": "456",
+    "bairro": "Centro",
+    "cidade": "São Paulo",
+    "estado": "SP",
+    "cep": "98765-432"
+  }
+}

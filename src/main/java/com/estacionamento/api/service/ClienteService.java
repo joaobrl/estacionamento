@@ -1,19 +1,15 @@
 package com.estacionamento.api.service;
 
 import com.estacionamento.api.domain.cliente.Cliente;
-import com.estacionamento.api.domain.cliente.TipoContrato;
-import com.estacionamento.api.domain.cliente.TipoPlano;
 import com.estacionamento.api.domain.cliente.dto.ClienteCreateDto;
 import com.estacionamento.api.domain.cliente.dto.ClienteUpdateDto;
 import com.estacionamento.api.domain.exceptions.RecursoNaoEncontradoException;
 import com.estacionamento.api.domain.pagamento.dto.PagamentoPlanoMensalDto;
-import com.estacionamento.api.domain.veiculo.Veiculo;
 import com.estacionamento.api.repository.ClienteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,16 +45,6 @@ public class ClienteService {
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Cliente", id));
     }
 
-    // Listar veiculos
-    public List<Veiculo> findAllVeiculos() {
-        List<Cliente> clientes = clienteRepository.findAll();
-        List<Veiculo> veiculos = new ArrayList<>();
-
-        for (Cliente cliente : clientes) {
-            veiculos.addAll(cliente.getVeiculos());
-        }
-        return veiculos;
-    }
 
     // Atualizar cliente
     public Cliente atualizarCliente(Long id, ClienteUpdateDto clienteUpdateDto) {
@@ -84,5 +70,17 @@ public class ClienteService {
 
     public Optional<Cliente> findClienteByVeiculoPlaca(String placa) {
         return clienteRepository.findClienteByVeiculoPlaca(placa);
+    }
+
+    public Cliente buscarPorMatricula(String matricula) {
+        return clienteRepository.findByMatricula(matricula)
+                .orElseThrow(() -> new RuntimeException("Cliente não encontrado para a matrícula: " + matricula));
+    }
+
+    public boolean isClienteComVeiculoNoEstacionamento(String matricula) {
+        Cliente cliente = buscarPorMatricula(matricula);
+
+        return cliente.getMovimentacaoClientePlano().stream()
+                .anyMatch(mov -> mov.getHoraSaida() == null);
     }
 }

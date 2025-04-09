@@ -1,0 +1,6 @@
+{
+  "clienteId": 456,
+  "metodoPagamento": "CARTAO_CREDITO",
+  "tipoPlano": "PREMIUM",
+  "tipoContrato": "ANUAL"
+}

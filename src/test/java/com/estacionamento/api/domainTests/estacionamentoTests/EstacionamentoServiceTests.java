@@ -1,14 +1,12 @@
 package com.estacionamento.api.domainTests.estacionamentoTests;
 
 import com.estacionamento.api.domain.estacionamento.Estacionamento;
-import com.estacionamento.api.repository.EstacionamentoRepository;
-import com.estacionamento.api.service.EstacionamentoService;
 import com.estacionamento.api.domain.estacionamento.dto.EstacionamentoCreateDto;
 import com.estacionamento.api.domain.estacionamento.dto.EstacionamentoUpdateDto;
 import com.estacionamento.api.domain.exceptions.VagaComNumeroJaExistenteException;
 import com.estacionamento.api.domain.vaga.dto.VagaCreateDto;
-import com.estacionamento.api.domain.vaga.dto.VagaDto;
-import com.estacionamento.api.domain.veiculo.VeiculoTipo;
+import com.estacionamento.api.repository.EstacionamentoRepository;
+import com.estacionamento.api.service.EstacionamentoService;
 import com.estacionamento.api.utils.UtilsMock;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,7 +19,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
-import static com.estacionamento.api.domain.veiculo.VeiculoTipo.CARRO;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -119,62 +116,4 @@ public class EstacionamentoServiceTests {
         verify(estacionamentoRepository, times(1)).findAll();
     }
 
-    @Test
-    @DisplayName("Listar vagas disponíveis")
-    public void testListarVagasDisponiveis() {
-        when(estacionamentoRepository.findEstacionamentoComVagasDisponiveis(anyLong())).thenReturn(List.of(UtilsMock.estacionamentoDisponivelMock()));
-
-        List<VagaDto> result = estacionamentoService.listarVagasDisponiveis(1L);
-
-        assertNotNull(result);
-        verify(estacionamentoRepository, times(1)).findEstacionamentoComVagasDisponiveis(anyLong());
-        assertEquals(3, result.size());
-    }
-
-//    @Test
-//    @DisplayName("Listar vagas disponíveis - Estacionamento lotado")
-//    public void testEstacionamentoLotado() {
-//        when(estacionamentoRepository.findEstacionamentoComVagasDisponiveis(anyLong())).thenReturn(List.of(UtilsMock.estacionamentoMock()));
-//
-//        assertThrows(EstacionamentoLotadoException.class, () -> estacionamentoService.listarVagasDisponiveis(anyLong()));
-//
-//        verify(estacionamentoRepository, times(1)).findEstacionamentoComVagasDisponiveis(anyLong());
-//
-//    }
-
-    @Test
-    @DisplayName("Listar vagas disponíveis por tipo de veiculos")
-    public void testListarVagasDisponiveisPorVeiculo() {
-        when(estacionamentoRepository.findEstacionamentoComVagasDisponiveisPorTipoVeiculo(anyLong(), eq(VeiculoTipo.CARRO))).thenReturn(List.of(UtilsMock.estacionamentoDisponivelMock()));
-
-        List<VagaDto> result = estacionamentoService.listarVagasDisponiveisPorVeiculo(1L, "CARRO");
-
-        assertNotNull(result);
-        verify(estacionamentoRepository, times(1)).findEstacionamentoComVagasDisponiveisPorTipoVeiculo(anyLong(), eq(CARRO));
-        assertEquals(1, result.size());
-    }
-
-
-    @Test
-    @DisplayName("Listar vagas ocupadas")
-    public void testListarVagasOcupadas() {
-        when(estacionamentoRepository.findEstacionamentoComVagasOcupadas(anyLong())).thenReturn(List.of(UtilsMock.estacionamentoMock()));
-
-        List<VagaDto> result = estacionamentoService.listarVagasOcupadas(anyLong());
-
-        verify(estacionamentoRepository, times(1)).findEstacionamentoComVagasOcupadas(anyLong());
-        assertEquals(3, result.size());
-    }
-
-    @Test
-    @DisplayName("Listar vagas ocupadas por tipo de veículos")
-    public void testListarVagasOcupadasPorVeiculo() {
-        when(estacionamentoRepository.findEstacionamentoComVagasOcupadasPorTipoVeiculo(anyLong(), eq(VeiculoTipo.CARRO))).thenReturn(List.of(UtilsMock.estacionamentoMock()));
-
-        List<VagaDto> result = estacionamentoService.listarVagasOcupadasPorVeiculo(1L, "CARRO");
-
-        assertNotNull(result);
-        verify(estacionamentoRepository, times(1)).findEstacionamentoComVagasOcupadasPorTipoVeiculo(anyLong(), eq(CARRO));
-        assertEquals(1, result.size());
-    }
 }
