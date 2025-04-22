@@ -9,6 +9,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -33,15 +34,18 @@ public class PagamentoService {
         ticketValidationService.validatePagamentoTicket(ticket);
 
         var estacionamento = estacionamentoService.findEstacionamentoById(ticket.getEstacionamento().getId());
+        ticket.setHoraSaida(LocalDateTime.now());
+        BigDecimal valorTicket = ticket.calcularValor();
 
-        Pagamento novoPagamento = criarPagamentoTicket(pagamentoTicketDto, ticket, estacionamento);
+        Pagamento novoPagamento = criarPagamentoTicket(pagamentoTicketDto, ticket, estacionamento, valorTicket);
         ticket.setPago(true);
         ticket.setHoraSaida(LocalDateTime.now());
 
         ticket.atualizar();
         ticket.calcularValor();
         ticket.setValor(ticket.getValor());
-        vagaService.liberarVaga(ticket);
+        var numeroVaga = ticket.getNumeroVaga();
+        vagaService.liberarVaga(estacionamento, numeroVaga);
         ticketService.saveTicket(ticket);
 
         return pagamentoRepository.save(novoPagamento);
@@ -50,6 +54,11 @@ public class PagamentoService {
     @Transactional
     public Pagamento pagamentoPlanoMensal(PagamentoPlanoMensalDto pagamentoPlanoMensalDto) {
         var cliente = clienteService.findClienteById(pagamentoPlanoMensalDto.clienteId());
+
+        if (cliente.getMatricula() == null) {
+            cliente.setMatricula(Util.gerarMatricula(cliente));
+            clienteService.salvarCliente(cliente);
+        }
 
         double valorMensalidade = Util.calcularValorMensalidade(
                 cliente.getTipoPlano(),

@@ -15,13 +15,7 @@ import java.time.LocalDateTime;
 @Embeddable
 public class MovimentacaoClientePlano {
 
-    @ManyToOne
-    @JoinColumn(name = "cliente_matricula", referencedColumnName = "matricula", nullable = false)
-    private Cliente cliente;
-
-    @ManyToOne
-    @JoinColumn(name = "estacionamento_id", nullable = false)
-    private Estacionamento estacionamento;
+    private Long estacionamentoId;
 
     @Embedded
     private Veiculo veiculo;
@@ -31,13 +25,5 @@ public class MovimentacaoClientePlano {
     private LocalDateTime horaEntrada;
 
     private LocalDateTime horaSaida;
-
-    public MovimentacaoClientePlano(Cliente cliente, Estacionamento estacionamento, String numeroVaga, Veiculo veiculo) {
-        this.cliente = cliente;
-        this.estacionamento = estacionamento;
-        this.numeroVaga = numeroVaga;
-        this.veiculo = veiculo;
-        this.horaEntrada = LocalDateTime.now();
-    }
 
 }

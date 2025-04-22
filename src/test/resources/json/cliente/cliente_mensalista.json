@@ -1,0 +1,12 @@
+{
+  "id": 1,
+  "nome": "João Silva",
+  "cpf": "12345678901",
+  "matricula": "MAT123",
+  "email": "joao.silva@email.com",
+  "telefone": "11999999999",
+  "tipoPlano": "PREMIUM",
+  "planoMensalAtivo": true,
+  "validadePlanoMensal": "2025-08-14T12:00:00",
+  "movimentacaoClientePlano": []
+}

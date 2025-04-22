@@ -1,5 +1,6 @@
 package com.estacionamento.api.util;
 
+import com.estacionamento.api.domain.cliente.Cliente;
 import com.estacionamento.api.domain.cliente.TipoContrato;
 import com.estacionamento.api.domain.cliente.TipoPlano;
 
@@ -18,15 +19,23 @@ public class Util {
         }
     }
 
-    public static String gerarMatricula(String cpf, Long id) {
-        String ultimosCpf = cpf.replaceAll("\\D", ""); // remove qualquer caractere não numérico
-        if (ultimosCpf.length() < 3) {
+    public static String gerarMatricula(Cliente cliente) {
+        if (cliente.getCpf() == null || cliente.getId() == null) {
+            throw new IllegalArgumentException("CPF e ID não podem ser nulos");
+        }
+
+        String numerosCpf = cliente.getCpf().replaceAll("\\D", "");
+
+        if (numerosCpf.length() < 3) {
             throw new IllegalArgumentException("CPF inválido para gerar matrícula");
         }
 
-        String ultimos3Cpf = ultimosCpf.substring(ultimosCpf.length() - 3);
-        String idFormatado = String.format("%03d", id); // garante 3 dígitos
+        String ultimos3Cpf = numerosCpf.substring(numerosCpf.length() - 3);
+        String idFormatado = String.format("%03d", cliente.getId());
 
-        return ultimos3Cpf + idFormatado.substring(idFormatado.length() - 3);
+        return ultimos3Cpf + idFormatado;
     }
+
+
+
 }

@@ -3,6 +3,7 @@ package com.estacionamento.api.service;
 import com.estacionamento.api.domain.estacionamento.Estacionamento;
 import com.estacionamento.api.domain.estacionamento.dto.EstacionamentoCreateDto;
 import com.estacionamento.api.domain.estacionamento.dto.EstacionamentoUpdateDto;
+import com.estacionamento.api.domain.exceptions.GenericException;
 import com.estacionamento.api.domain.exceptions.RecursoNaoEncontradoException;
 import com.estacionamento.api.domain.exceptions.VagaNaoDisponivelException;
 import com.estacionamento.api.domain.vaga.Vaga;
@@ -14,11 +15,11 @@ import com.estacionamento.api.domain.veiculo.Veiculo;
 import com.estacionamento.api.domain.veiculo.VeiculoTipo;
 import com.estacionamento.api.repository.EstacionamentoRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -74,10 +75,6 @@ public class EstacionamentoService {
                 .findFirst()
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Vaga", vagaUpdateDto.numeroVaga()));
 
-        if (!vaga.getDisponibilidade()) {
-            throw new VagaNaoDisponivelException();
-        }
-
         vaga.atualizar(vagaUpdateDto);
 
         estacionamentoRepository.save(estacionamento);
@@ -101,5 +98,14 @@ public class EstacionamentoService {
                 .filter(vaga -> vaga.getVeiculoTipo().equals(veiculo.getVeiculoTipo()))
                 .findFirst()
                 .orElseThrow(VagaNaoDisponivelException::new);
+    }
+
+    public Vaga verificarDisponibilidadeVagaLivre(Long estacionamentoId, VeiculoTipo veiculoTipo) {
+
+        List<Vaga> vagasDisponiveis = estacionamentoRepository.findVagaLivreDisponivelPorVeiculo(estacionamentoId, veiculoTipo);
+
+        return vagasDisponiveis.stream()
+                .findFirst()
+                .orElseThrow(() -> new GenericException("Estacionamento com ID '" + estacionamentoId + "' está com capacidade máxima atingida.", HttpStatus.CONFLICT.value()));
     }
 }

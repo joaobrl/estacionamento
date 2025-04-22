@@ -1,7 +1,9 @@
 package com.estacionamento.api.domain.vaga;
 
 import com.estacionamento.api.domain.estacionamento.dto.EstacionamentoUpdateDto;
+import com.estacionamento.api.domain.vaga.dto.VagaCreateDto;
 import com.estacionamento.api.domain.vaga.dto.VagaUpdateDto;
+import com.estacionamento.api.domain.veiculo.Veiculo;
 import com.estacionamento.api.domain.veiculo.VeiculoTipo;
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
@@ -21,10 +23,10 @@ public class Vaga {
     private Boolean disponibilidade;
     private TipoVaga tipoVaga;
 
-    public Vaga(String numeroVaga, VeiculoTipo veiculoTipo, TipoVaga tipoVaga) {
-        this.numeroVaga = numeroVaga;
-        this.veiculoTipo = veiculoTipo;
-        this.tipoVaga = tipoVaga;
+    public Vaga(VagaCreateDto vagaCreateDto) {
+        this.numeroVaga = vagaCreateDto.numeroVaga();
+        this.veiculoTipo = vagaCreateDto.veiculoTipo();
+        this.tipoVaga = vagaCreateDto.tipoVaga();
         this.disponibilidade = true;
     }
 
@@ -40,7 +42,7 @@ public class Vaga {
         }
     }
 
-    public void ocuparVaga() {
+    public void ocuparVaga(String numeroVaga) {
         if (!this.disponibilidade) {
             throw new IllegalStateException("A vaga já está ocupada.");
         }

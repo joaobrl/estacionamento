@@ -16,21 +16,9 @@ public interface ClienteRepository extends JpaRepository<Cliente, Long> {
 
     Optional<Cliente> findByCpf(String cpf);
 
-    @Query("SELECT v FROM Cliente c JOIN c.veiculos v")
-    List<Veiculo> findAllVeiculos();
-
-    @Query("SELECT c FROM Cliente c JOIN c.veiculos v WHERE v.placa = :placa")
-    Optional<Cliente> findClienteByVeiculoPlaca(@Param("placa") String placa);
-
-    @Query("SELECT c FROM Cliente c " +
-            "WHERE c.planoMensalAtivo = true " +
-            "AND c.renovacaoAutomaticaPlano = true " +
-            "AND c.validadePlanoMensal < :dataAtual")
-    List<Cliente> findClientesComRenovacaoAutomaticaEPlanoExpirado(@Param("dataAtual") LocalDateTime dataAtual);
-
     @Query("SELECT c FROM Cliente c LEFT JOIN FETCH c.movimentacaoClientePlano WHERE c.matricula = :matricula")
     Optional<Cliente> findByMatricula(@Param("matricula") String matricula);
 
     @Query("SELECT m FROM Cliente c JOIN c.movimentacaoClientePlano m WHERE c.matricula = :matricula AND m.horaSaida IS NULL")
-    Optional<MovimentacaoClientePlano> findMovimentacaoAtivaByMatricula(String matricula);
+    Optional<MovimentacaoClientePlano> findMovimentacaoAtivaByMatricula(@Param("matricula") String matricula);
 }

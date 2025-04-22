@@ -1,94 +1,95 @@
-//package com.estacionamento.api.domainTests.pagamentoTests;
-//
-//import com.estacionamento.api.domain.cliente.Cliente;
-//import com.estacionamento.api.repository.ClienteRepository;
-//import com.estacionamento.api.domain.cliente.TipoPlano;
-//import com.estacionamento.api.domain.estacionamento.Estacionamento;
-//import com.estacionamento.api.repository.EstacionamentoRepository;
-//import com.estacionamento.api.domain.exceptions.RecursoNaoEncontradoException;
-//import com.estacionamento.api.domain.exceptions.TicketJaPagoException;
-//import com.estacionamento.api.domain.pagamento.Pagamento;
-//import com.estacionamento.api.repository.PagamentoRepository;
-//import com.estacionamento.api.service.PagamentoService;
-//import com.estacionamento.api.domain.pagamento.dto.PagamentoPlanoMensalDto;
-//import com.estacionamento.api.domain.pagamento.dto.PagamentoTicketDto;
-//import com.estacionamento.api.domain.ticket.Ticket;
-//import com.estacionamento.api.repository.TicketRepository;
-//import com.estacionamento.api.domain.vaga.Vaga;
-//import com.estacionamento.api.utils.UtilsMock;
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.DisplayName;
-//import org.junit.jupiter.api.Test;
-//import org.junit.jupiter.api.extension.ExtendWith;
-//import org.mockito.InjectMocks;
-//import org.mockito.Mock;
-//import org.mockito.junit.jupiter.MockitoExtension;
-//
-//import java.math.BigDecimal;
-//import java.time.LocalDateTime;
-//import java.time.temporal.ChronoUnit;
-//import java.util.List;
-//import java.util.Optional;
-//
-//import static org.junit.jupiter.api.Assertions.*;
-//import static org.mockito.ArgumentMatchers.any;
-//import static org.mockito.ArgumentMatchers.anyLong;
-//import static org.mockito.Mockito.*;
-//
-//@ExtendWith(MockitoExtension.class)
-//public class PagamentoServiceTest {
-//    @InjectMocks
-//    private PagamentoService pagamentoService;
-//    private Pagamento pagamento;
-//    private Ticket ticket;
-//    private Vaga vaga;
-//    private Cliente cliente;
-//    private Estacionamento estacionamento;
-//    private PagamentoPlanoMensalDto pagamentoPlanoMensal;
-//    private PagamentoTicketDto pagamentoTicketDto;
-//    @Mock
-//    private TicketRepository ticketRepository;
-//    @Mock
-//    private PagamentoRepository pagamentoRepository;
-//    @Mock
-//    private EstacionamentoRepository estacionamentoRepository;
-//    @Mock
-//    private ClienteRepository clienteRepository;
-//
-//    @BeforeEach
-//    void setUp() {
-//        pagamento = new Pagamento();
-//        ticket = UtilsMock.ticketMock();
+package com.estacionamento.api.domainTests.pagamentoTests;
+
+import com.estacionamento.api.domain.cliente.Cliente;
+import com.estacionamento.api.repository.ClienteRepository;
+import com.estacionamento.api.domain.cliente.TipoPlano;
+import com.estacionamento.api.domain.estacionamento.Estacionamento;
+import com.estacionamento.api.repository.EstacionamentoRepository;
+import com.estacionamento.api.domain.exceptions.RecursoNaoEncontradoException;
+import com.estacionamento.api.domain.exceptions.TicketJaPagoException;
+import com.estacionamento.api.domain.pagamento.Pagamento;
+import com.estacionamento.api.repository.PagamentoRepository;
+import com.estacionamento.api.service.PagamentoService;
+import com.estacionamento.api.domain.pagamento.dto.PagamentoPlanoMensalDto;
+import com.estacionamento.api.domain.pagamento.dto.PagamentoTicketDto;
+import com.estacionamento.api.domain.ticket.Ticket;
+import com.estacionamento.api.repository.TicketRepository;
+import com.estacionamento.api.domain.vaga.Vaga;
+import com.estacionamento.api.utils.UtilsMock;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+public class PagamentoServiceTest {
+    @InjectMocks
+    private PagamentoService pagamentoService;
+    private Pagamento pagamento;
+    private Ticket ticket;
+    private Vaga vaga;
+    private Cliente cliente;
+    private Estacionamento estacionamento;
+    private PagamentoPlanoMensalDto pagamentoPlanoMensal;
+    private PagamentoTicketDto pagamentoTicketDto;
+    @Mock
+    private TicketRepository ticketRepository;
+    @Mock
+    private PagamentoRepository pagamentoRepository;
+    @Mock
+    private EstacionamentoRepository estacionamentoRepository;
+    @Mock
+    private ClienteRepository clienteRepository;
+
+    @BeforeEach
+    void setUp() {
+        pagamento = new Pagamento();
+
 //        estacionamento = UtilsMock.estacionamentoMock();
 //        vaga = UtilsMock.vagaMock();
 //        cliente = UtilsMock.clienteMock();
 //        pagamentoPlanoMensal = UtilsMock.pagamentoPlanoMensalMock();
 //        pagamentoTicketDto = UtilsMock.pagamentoTicketDtoMock();
-//    }
-//
+    }
+
 //    @Test
 //    @DisplayName("Pagamento de ticket - Ticket não encontrado")
 //    public void testPagamentoTicket_TicketNaoEncontrado() {
 //        when(ticketRepository.findById(anyLong())).thenReturn(Optional.empty());
 //
-//        assertThrows(RecursoNaoEncontradoException.class, () -> pagamentoService.pagamentoTicket(pagamentoTicketDto));
+//        assertThrows(RecursoNaoEncontradoException.class, () -> pagamentoService.pagamentoTicket(any()));
 //
 //        verify(ticketRepository, times(1)).findById(anyLong());
 //    }
-//
-//    @Test
-//    @DisplayName("Pagamento de ticket - Estacionamento não encontrado")
-//    public void testPagamentoTicket_EstacionamentoNaoEncontrado() {
-//        when(ticketRepository.findById(anyLong())).thenReturn(Optional.of(ticket));
-//        when(estacionamentoRepository.findById(anyLong())).thenReturn(Optional.empty());
-//
-//        assertThrows(RecursoNaoEncontradoException.class, () -> pagamentoService.pagamentoTicket(pagamentoTicketDto)
-//        );
-//
-//        verify(ticketRepository, times(1)).findById(anyLong());
-//        verify(estacionamentoRepository, times(1)).findById(anyLong());
-//    }
-//
+
+    @Test
+    @DisplayName("Pagamento de ticket - Estacionamento não encontrado")
+    public void testPagamentoTicket_EstacionamentoNaoEncontrado() {
+        ticket = UtilsMock.ticketAbertoJSON();
+        when(ticketRepository.findById(anyLong())).thenReturn(Optional.of(ticket));
+        when(estacionamentoRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        assertThrows(RecursoNaoEncontradoException.class, () -> pagamentoService.pagamentoTicket(pagamentoTicketDto)
+        );
+
+        verify(ticketRepository, times(1)).findById(anyLong());
+        verify(estacionamentoRepository, times(1)).findById(anyLong());
+    }
+
 //    @Test
 //    @DisplayName("Pagamento de ticket - Ticket já pago")
 //    public void testPagamentoTicket_TicketJaPago() {
@@ -222,16 +223,16 @@
 //        assertNotNull(cliente.getValidadePlanoMensal());
 //        assertEquals(766.6666666666667, valor);
 //    }
-//
-//    @Test
-//    @DisplayName("Listar pagamentos")
-//    public void testListarPagamentos() {
-//        when(pagamentoRepository.findAll()).thenReturn(List.of(pagamento));
-//
-//        List<Pagamento> result = pagamentoService.listarPagamentos();
-//
-//        assertNotNull(result);
-//        verify(pagamentoRepository, times(1)).findAll();
-//    }
-//
-//}
+
+    @Test
+    @DisplayName("Listar pagamentos")
+    public void testListarPagamentos() {
+        when(pagamentoRepository.findAll()).thenReturn(List.of(pagamento));
+
+        List<Pagamento> result = pagamentoService.listarPagamentos();
+
+        assertNotNull(result);
+        verify(pagamentoRepository, times(1)).findAll();
+    }
+
+}

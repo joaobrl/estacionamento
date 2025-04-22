@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface EstacionamentoRepository extends JpaRepository<Estacionamento, Long> {
 
@@ -20,4 +21,11 @@ public interface EstacionamentoRepository extends JpaRepository<Estacionamento, 
                                   @Param("disponibilidade") Boolean disponibilidade,
                                   @Param("tipoVaga") TipoVaga tipoVaga,
                                   @Param("veiculoTipo") VeiculoTipo veiculoTipo);
-   }
+
+    @Query("SELECT v FROM Estacionamento e JOIN e.vagas v WHERE e.id = :estacionamentoId " +
+            "AND v.disponibilidade = true " +
+            "AND v.tipoVaga = com.estacionamento.api.domain.vaga.TipoVaga.LIVRE " +
+            "AND v.veiculoTipo = :veiculoTipo")
+    List<Vaga> findVagaLivreDisponivelPorVeiculo(@Param("estacionamentoId") Long estacionamentoId,
+                                                 @Param("veiculoTipo") VeiculoTipo veiculoTipo);
+}

@@ -1,0 +1,12 @@
+{
+  "id": 3,
+  "nome": "Carlos Souza",
+  "cpf": "11223344556",
+  "matricula": "MAT789",
+  "email": "carlos.souza@email.com",
+  "telefone": "31977777777",
+  "tipoPlano": null,
+  "planoMensalAtivo": false,
+  "validadePlanoMensal": null,
+  "movimentacaoClientePlano": []
+}

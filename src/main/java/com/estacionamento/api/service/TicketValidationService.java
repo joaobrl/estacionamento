@@ -17,6 +17,7 @@ public class TicketValidationService {
         for (TicketValidationStrategy strategy : validationStrategies) {
             if (strategy.supports("criarTicket")) {
                 strategy.validate(ticket);
+                return true;
             }
         }
         return false;

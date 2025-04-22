@@ -6,6 +6,7 @@ import com.estacionamento.api.domain.cliente.dto.ClienteUpdateDto;
 import com.estacionamento.api.domain.exceptions.RecursoNaoEncontradoException;
 import com.estacionamento.api.domain.pagamento.dto.PagamentoPlanoMensalDto;
 import com.estacionamento.api.repository.ClienteRepository;
+import com.estacionamento.api.util.Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -68,19 +69,22 @@ public class ClienteService {
         clienteRepository.save(cliente);
     }
 
-    public Optional<Cliente> findClienteByVeiculoPlaca(String placa) {
-        return clienteRepository.findClienteByVeiculoPlaca(placa);
-    }
-
     public Cliente buscarPorMatricula(String matricula) {
-        return clienteRepository.findByMatricula(matricula)
-                .orElseThrow(() -> new RuntimeException("Cliente não encontrado para a matrícula: " + matricula));
+        return clienteRepository.findByMatricula(matricula).orElse(null);
     }
 
     public boolean isClienteComVeiculoNoEstacionamento(String matricula) {
-        Cliente cliente = buscarPorMatricula(matricula);
+        var cliente = buscarPorMatricula(matricula);
+
+        if (cliente == null) {
+            return false;
+        }
 
         return cliente.getMovimentacaoClientePlano().stream()
                 .anyMatch(mov -> mov.getHoraSaida() == null);
+    }
+
+    public void salvarCliente(Cliente cliente) {
+        clienteRepository.save(cliente);
     }
 }

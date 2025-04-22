@@ -2,9 +2,9 @@
   "estacionamentoId": 1,
   "veiculo": {
     "placa": "ABC1234",
-    "tipo": "CARRO",
+    "veiculoTipo": "CAMINHAO",
     "modelo": "Uno",
     "marca": "Fiat"
   },
-  "matricula": "123456"
+  "matricula": "MAT123"
 }

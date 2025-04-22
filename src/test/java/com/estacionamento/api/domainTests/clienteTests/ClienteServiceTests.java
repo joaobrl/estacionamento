@@ -1,6 +1,8 @@
 package com.estacionamento.api.domainTests.clienteTests;
 
 import com.estacionamento.api.domain.cliente.Cliente;
+import com.estacionamento.api.domain.cliente.dto.ClienteCreateDto;
+import com.estacionamento.api.domain.cliente.dto.ClienteUpdateDto;
 import com.estacionamento.api.repository.ClienteRepository;
 import com.estacionamento.api.service.ClienteService;
 import com.estacionamento.api.utils.UtilsMock;
@@ -27,11 +29,14 @@ public class ClienteServiceTests {
     @InjectMocks
     private ClienteService clienteService;
     private Cliente cliente;
+    private ClienteCreateDto clienteCreateDto;
+    private ClienteUpdateDto clienteUpdateDto;
 
     @BeforeEach
     void setUp() {
-      cliente = new Cliente();
-
+        clienteCreateDto = UtilsMock.cadastrarClienteJSON();
+        clienteUpdateDto = UtilsMock.atualizarClienteJSON();
+        cliente = new Cliente(clienteCreateDto);
     }
 
     @Test

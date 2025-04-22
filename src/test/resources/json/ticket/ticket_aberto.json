@@ -1,0 +1,100 @@
+{
+  "id": 1,
+  "cliente": {
+    "id": 1,
+    "nome": "João Silva",
+    "cpf": "12345678901",
+    "matricula": "MAT123",
+    "email": "joao.silva@email.com",
+    "telefone": "11999999999",
+    "tipoPlano": null,
+    "planoMensalAtivo": false,
+    "validadePlanoMensal": null
+  },
+  "veiculo": {
+    "placa": "ABC1234",
+    "veiculoTipo": "CARRO",
+    "modelo": "Civic",
+    "marca": "Honda"
+  },
+  "estacionamento": {
+    "id": 1,
+    "nome": "Estacionamento Central",
+    "endereco": {
+      "rua": "Avenida Principal",
+      "numero": "123",
+      "bairro": "Centro",
+      "cidade": "São Paulo",
+      "estado": "SP",
+      "cep": "01000-000"
+    },
+    "capacidade": 100,
+    "vagas": [
+      {
+        "numeroVaga": 1,
+        "veiculoTipo": "MOTO",
+        "tipoVaga": "LIVRE",
+        "disponibilidade": true
+      },
+      {
+        "numeroVaga": 2,
+        "veiculoTipo": "MOTO",
+        "tipoVaga": "LIVRE",
+        "disponibilidade": true
+      },
+      {
+        "numeroVaga": 3,
+        "veiculoTipo": "MOTO",
+        "tipoVaga": "LIVRE",
+        "disponibilidade": true
+      },
+      {
+        "numeroVaga": 4,
+        "veiculoTipo": "CARRO",
+        "tipoVaga": "LIVRE",
+        "disponibilidade": true
+      },
+      {
+        "numeroVaga": 5,
+        "veiculoTipo": "CARRO",
+        "tipoVaga": "LIVRE",
+        "disponibilidade": true
+      },
+      {
+        "numeroVaga": 6,
+        "veiculoTipo": "MOTO",
+        "tipoVaga": "MENSALISTA",
+        "disponibilidade": true
+      },
+      {
+        "numeroVaga": 7,
+        "veiculoTipo": "CARRO",
+        "tipoVaga": "MENSALISTA",
+        "disponibilidade": true
+      },
+      {
+        "numeroVaga": 8,
+        "veiculoTipo": "CARRO",
+        "tipoVaga": "MENSALISTA",
+        "disponibilidade": true
+      },
+      {
+        "numeroVaga": 9,
+        "veiculoTipo": "CARRO",
+        "tipoVaga": "MENSALISTA",
+        "disponibilidade": true
+      },
+      {
+        "numeroVaga": 10,
+        "veiculoTipo": "CAMINHAO",
+        "tipoVaga": "MENSALISTA",
+        "disponibilidade": true
+      }
+    ]
+  },
+  "numeroVaga": "A1",
+  "horaEntrada": "05/03/2025 08:00:00",
+  "horaSaida": null,
+  "pago": false,
+  "valor": 0.0
+}

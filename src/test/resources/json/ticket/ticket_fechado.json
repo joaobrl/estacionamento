@@ -1,0 +1,29 @@
+{
+  "id": 2,
+  "cliente": {
+    "id": 1,
+    "nome": "João Silva",
+    "cpf": "12345678901",
+    "matricula": "MAT123",
+    "email": "joao.silva@email.com",
+    "telefone": "11999999999",
+    "tipoPlano": null,
+    "planoMensalAtivo": false,
+    "validadePlanoMensal": null
+  },
+  "veiculo": {
+    "placa": "ABC1234",
+    "veiculoTipo": "CARRO",
+    "modelo": "Civic",
+    "marca": "Honda"
+  },
+  "estacionamento": {
+    "id": 1,
+    "nome": "Estacionamento Central"
+  },
+  "numeroVaga": "A1",
+  "horaEntrada": "01/03/2025 08:00:00",
+  "horaSaida": "01/03/2025 10:00:00",
+  "pago": true,
+  "valor": 12.0
+}

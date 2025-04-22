@@ -26,15 +26,16 @@ public class ClienteValidationService {
     }
 
     public boolean isPlanoAtivo(Cliente cliente) {
-        return cliente.getPlanoMensalAtivo() && cliente.getValidadePlanoMensal() != null
+        if (cliente == null) {
+            throw new IllegalArgumentException("Cliente não pode ser nulo.");
+        }
+        return cliente.getPlanoMensalAtivo()
+                && cliente.getValidadePlanoMensal() != null
                 && cliente.getValidadePlanoMensal().isAfter(java.time.LocalDateTime.now());
     }
-
 
     public boolean isClienteComVeiculoNoEstacionamento(String matricula) {
         return clienteService.isClienteComVeiculoNoEstacionamento(matricula);
     }
-
-
 
 }

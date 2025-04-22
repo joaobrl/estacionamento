@@ -1,0 +1,23 @@
+{
+  "id": 2,
+  "nome": "Maria Oliveira",
+  "cpf": "98765432100",
+  "matricula": "MAT456",
+  "email": "maria.oliveira@email.com",
+  "telefone": "21988888888",
+  "tipoPlano": "PREMIUM",
+  "planoMensalAtivo": true,
+  "validadePlanoMensal": "31/12/2025 23:59:59",
+  "movimentacaoClientePlano": [
+    {
+      "veiculo": {
+        "placa": "ABC1234",
+        "veiculoTipo": "CARRO",
+        "modelo": "Civic",
+        "marca": "Honda"
+      },
+      "horaEntrada": "01/11/2024 08:00:00",
+      "horaSaida": null
+    }
+  ]
+}

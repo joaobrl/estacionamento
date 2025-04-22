@@ -1,0 +1,39 @@
+{
+  "id": 1,
+  "nome": "Estacionamento Central",
+  "endereco": {
+    "rua": "Avenida Principal",
+    "numero": "123",
+    "bairro": "Centro",
+    "cidade": "São Paulo",
+    "estado": "SP",
+    "cep": "01000-000"
+  },
+  "capacidade": 100,
+  "vagas": [
+    {
+      "numeroVaga": 1,
+      "veiculoTipo": "MOTO",
+      "tipoVaga": "LIVRE",
+      "disponibilidade": true
+    },
+    {
+      "numeroVaga": 2,
+      "veiculoTipo": "MOTO",
+      "tipoVaga": "MENSALISTA",
+      "disponibilidade": true
+    },
+    {
+      "numeroVaga": 3,
+      "veiculoTipo": "CARRO",
+      "tipoVaga": "LIVRE",
+      "disponibilidade": true
+    },
+    {
+      "numeroVaga": 4,
+      "veiculoTipo": "CARRO",
+      "tipoVaga": "MENSALISTA",
+      "disponibilidade": true
+    }
+  ]
+}

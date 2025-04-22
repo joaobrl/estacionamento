@@ -3,12 +3,13 @@ package com.estacionamento.api.domain.estacionamento;
 import com.estacionamento.api.domain.endereco.Endereco;
 import com.estacionamento.api.domain.estacionamento.dto.EstacionamentoCreateDto;
 import com.estacionamento.api.domain.estacionamento.dto.EstacionamentoUpdateDto;
-import com.estacionamento.api.domain.exceptions.EstacionamentoLotadoException;
+import com.estacionamento.api.domain.exceptions.GenericException;
 import com.estacionamento.api.domain.exceptions.VagaComNumeroJaExistenteException;
 import com.estacionamento.api.domain.vaga.Vaga;
 import com.estacionamento.api.domain.vaga.dto.VagaCreateDto;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.http.HttpStatus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,8 +33,16 @@ public class Estacionamento {
     private Endereco endereco;
     @Column(name = "capacidade", nullable = false)
     private Integer capacidade;
+
+
     @ElementCollection
     @CollectionTable(name = "vagas", joinColumns = @JoinColumn(name = "estacionamento_id"))
+    @AttributeOverrides({
+            @AttributeOverride(name = "numeroVaga", column = @Column(name = "numero_vaga")),
+            @AttributeOverride(name = "veiculoTipo", column = @Column(name = "veiculo_tipo")),
+            @AttributeOverride(name = "disponibilidade", column = @Column(name = "disponibilidade")),
+            @AttributeOverride(name = "tipoVaga", column = @Column(name = "tipo_vaga"))
+    })
     private List<Vaga> vagas = new ArrayList<>();
 
     public Estacionamento(EstacionamentoCreateDto dados) {
@@ -63,10 +72,10 @@ public class Estacionamento {
         }
 
         if (vagas.size() >= capacidade) {
-            throw new EstacionamentoLotadoException(id);
+            throw new GenericException("Estacionamento com ID '" + id + "' está com capacidade máxima atingida.", HttpStatus.CONFLICT.value());
         }
 
-        Vaga novaVaga = new Vaga(vagaCreateDto.numeroVaga(), vagaCreateDto.veiculoTipo(), vagaCreateDto.tipoVaga());
+        Vaga novaVaga = new Vaga(vagaCreateDto);
         this.vagas.add(novaVaga);
     }
 

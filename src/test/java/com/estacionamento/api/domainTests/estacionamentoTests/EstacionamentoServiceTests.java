@@ -1,9 +1,11 @@
 package com.estacionamento.api.domainTests.estacionamentoTests;
 
+import com.estacionamento.api.domain.endereco.Endereco;
 import com.estacionamento.api.domain.estacionamento.Estacionamento;
 import com.estacionamento.api.domain.estacionamento.dto.EstacionamentoCreateDto;
 import com.estacionamento.api.domain.estacionamento.dto.EstacionamentoUpdateDto;
 import com.estacionamento.api.domain.exceptions.VagaComNumeroJaExistenteException;
+import com.estacionamento.api.domain.vaga.Vaga;
 import com.estacionamento.api.domain.vaga.dto.VagaCreateDto;
 import com.estacionamento.api.repository.EstacionamentoRepository;
 import com.estacionamento.api.service.EstacionamentoService;
@@ -12,6 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -37,63 +40,92 @@ public class EstacionamentoServiceTests {
 
     @BeforeEach
     void SetUp() {
-        estacionamento = new Estacionamento();
-        estacionamentoCreateDto = UtilsMock.criarEstacionamentoCreateDto();
-        estacionamentoUpdateDto = UtilsMock.atualizarEstacionamentoUpdateDto();
-        vagaCreateDto = UtilsMock.vagaDisponivel();
+        estacionamentoCreateDto = UtilsMock.criarEstacionamentoJSON();
+        estacionamento = new Estacionamento(estacionamentoCreateDto);
+        estacionamentoUpdateDto = UtilsMock.atualizarEstacionamentoJSON();
+        vagaCreateDto = UtilsMock.cadastrarVagaLivreJSON();
     }
+
 
     @Test
     @DisplayName("Cadastrar estacionamento")
     public void testCadastrarEstacionamento() {
-        when(estacionamentoRepository.save(any(Estacionamento.class))).thenReturn(estacionamento);
+        EstacionamentoCreateDto dto = UtilsMock.criarEstacionamentoJSON();
 
-        Estacionamento result = estacionamentoService.cadastrarEstacionamento(estacionamentoCreateDto);
+        when(estacionamentoRepository.save(any(Estacionamento.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Estacionamento result = estacionamentoService.cadastrarEstacionamento(dto);
 
         assertNotNull(result);
-        verify(estacionamentoRepository, times(1)).save(any(Estacionamento.class));
+        ArgumentCaptor<Estacionamento> captor = ArgumentCaptor.forClass(Estacionamento.class);
+        verify(estacionamentoRepository, times(1)).save(captor.capture());
 
-        assertEquals(estacionamento.getNome(), result.getNome());
-        assertEquals(estacionamento.getCapacidade(), result.getCapacidade());
+        Estacionamento estacionamentoSalvo = captor.getValue();
+
+        assertEquals(dto.nome(), estacionamentoSalvo.getNome());
+        assertEquals(dto.capacidade(), estacionamentoSalvo.getCapacidade());
     }
+
 
     @Test
     @DisplayName("Atualizar estacionamento")
     public void testAtualizarEstacionamento() {
-        when(estacionamentoRepository.findById(anyLong())).thenReturn(Optional.of(UtilsMock.estacionamentoMock()));
-        when(estacionamentoRepository.save(any(Estacionamento.class))).thenReturn(UtilsMock.estacionamentoMock());
+        when(estacionamentoRepository.findById(anyLong())).thenReturn(Optional.of(estacionamento));
+        when(estacionamentoRepository.save(any(Estacionamento.class))).thenReturn(estacionamento);
 
-        Estacionamento result = estacionamentoService.atualizarEstacionamento(any(), estacionamentoUpdateDto);
+        Estacionamento result = estacionamentoService.atualizarEstacionamento(1L, estacionamentoUpdateDto);
+
+        ArgumentCaptor<Estacionamento> captor = ArgumentCaptor.forClass(Estacionamento.class);
+        verify(estacionamentoRepository).save(captor.capture());
+        Estacionamento salvo = captor.getValue();
 
         assertNotNull(result);
-        verify(estacionamentoRepository, times(1)).save(any(Estacionamento.class));
-
-        assertEquals(UtilsMock.estacionamentoMock().getNome(), result.getNome());
-        assertEquals(UtilsMock.estacionamentoMock().getCapacidade(), result.getCapacidade());
+        assertEquals(estacionamentoUpdateDto.nome(), salvo.getNome());
+        assertEquals(estacionamentoUpdateDto.capacidade(), salvo.getCapacidade());
+        assertEquals(estacionamentoUpdateDto.nome(), result.getNome());
     }
 
     @Test
     @DisplayName("Cadastrar vaga estacionamento")
     public void testCadastrarVagaEstacionamento() {
-        when(estacionamentoRepository.findById(anyLong())).thenReturn(Optional.of(UtilsMock.estacionamentoMock()));
-        when(estacionamentoRepository.save(any(Estacionamento.class))).thenReturn(UtilsMock.estacionamentoMock());
+        when(estacionamentoRepository.findById(anyLong())).thenReturn(Optional.of(estacionamento));
+        when(estacionamentoRepository.save(any(Estacionamento.class))).thenReturn(estacionamento);
 
         Estacionamento result = estacionamentoService.adicionarVaga(1L, vagaCreateDto);
+
+        ArgumentCaptor<Estacionamento> captor = ArgumentCaptor.forClass(Estacionamento.class);
+        verify(estacionamentoRepository).save(captor.capture());
+        Estacionamento salvo = captor.getValue();
+
+        assertTrue(
+                salvo.getVagas().stream()
+                        .anyMatch(v -> v.getNumeroVaga().equals(vagaCreateDto.numeroVaga()))
+        );
+        assertTrue(result.getVagas().stream()
+                .anyMatch(v -> v.getNumeroVaga().equals(vagaCreateDto.numeroVaga())));
+
 
         assertNotNull(result);
     }
 
+
     @Test
     @DisplayName("Cadastrar vaga estacionamento - Vaga com número já existente")
     public void testCadastrarVagaJaExistente() {
-        when(estacionamentoRepository.findById(anyLong())).thenReturn(Optional.of(UtilsMock.estacionamentoMock()));
+        var vagaJaCadastrada = UtilsMock.cadastrarVagaExistenteJSON();
+        estacionamento.getVagas().add(new Vaga(vagaJaCadastrada));
 
-        assertThrows(VagaComNumeroJaExistenteException.class, () -> estacionamentoService.adicionarVaga(1L, UtilsMock.vagaJaCadastrada()));
+        when(estacionamentoRepository.findById(anyLong())).thenReturn(Optional.of(estacionamento));
+
+        assertThrows(VagaComNumeroJaExistenteException.class, () ->
+                estacionamentoService.adicionarVaga(1L, vagaJaCadastrada)
+        );
 
         verify(estacionamentoRepository, times(1)).findById(anyLong());
     }
 
-        @Test
+
+    @Test
     @DisplayName("Detalhar estacionamento")
     public void testDetalharEstacionamento() {
         when(estacionamentoRepository.findById(anyLong())).thenReturn(Optional.of(estacionamento));
@@ -101,8 +133,10 @@ public class EstacionamentoServiceTests {
         Estacionamento result = estacionamentoService.detalharEstacionamento(1L);
 
         assertNotNull(result);
+        assertEquals(estacionamento.getNome(), result.getNome());
         verify(estacionamentoRepository, times(1)).findById(anyLong());
     }
+
 
     @Test
     @DisplayName("Listar estacionamentos")
@@ -113,6 +147,8 @@ public class EstacionamentoServiceTests {
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
+        assertEquals(1, result.size());
+        assertEquals(estacionamento.getNome(), result.get(0).getNome());
         verify(estacionamentoRepository, times(1)).findAll();
     }
 

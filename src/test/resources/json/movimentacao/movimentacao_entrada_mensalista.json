@@ -1,0 +1,10 @@
+{
+  "estacionamentoId": 1,
+  "veiculo": {
+    "placa": "ABC1234",
+    "veiculoTipo": "CARRO",
+    "modelo": "Uno",
+    "marca": "Fiat"
+  },
+  "matricula": "MAT123"
+}

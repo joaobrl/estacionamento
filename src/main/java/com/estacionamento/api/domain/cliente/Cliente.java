@@ -33,7 +33,7 @@ public class Cliente {
     @Column(unique = true)
     private String cpf;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true)
     private String matricula;
 
     @Column(unique = true)
@@ -47,11 +47,10 @@ public class Cliente {
 
     private Boolean planoMensalAtivo = false;
 
-    @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
     private LocalDateTime validadePlanoMensal;
 
     @ElementCollection
-    @CollectionTable(name = "movimentacaoClientePlano", joinColumns = @JoinColumn(name = "movimentacaoClientePlano_matricula"))
+    @CollectionTable(name = "movimentacao_cliente_plano", joinColumns = @JoinColumn(name = "cliente_id"))
     private List<MovimentacaoClientePlano> movimentacaoClientePlano = new ArrayList<>();
 
     public Cliente(ClienteCreateDto clienteCreateDto) {
@@ -59,7 +58,6 @@ public class Cliente {
         this.cpf = clienteCreateDto.cpf();
         this.email = clienteCreateDto.email();
         this.telefone = clienteCreateDto.telefone();
-        this.matricula = Util.gerarMatricula(clienteCreateDto.cpf(), this.id);
         this.movimentacaoClientePlano = new ArrayList<>();
     }
 

@@ -53,11 +53,11 @@ public class Pagamento {
     private LocalDateTime dataPagamento;
 
     // Construtor para pagamento de Ticket
-    public Pagamento(PagamentoTicketDto pagamentoTicketDto, Ticket ticket, Estacionamento estacionamento) {
+    public Pagamento(PagamentoTicketDto pagamentoTicketDto, Ticket ticket, Estacionamento estacionamento, BigDecimal valor) {
         this.ticket = ticket;
         this.estacionamento = estacionamento;
         this.metodoPagamento = pagamentoTicketDto.metodoPagamento();
-        this.valor = ticket.getValor();
+        this.valor = valor;
         this.tipoPagamento = TipoPagamento.TICKET;
         this.dataPagamento = LocalDateTime.now();
     }
@@ -73,8 +73,8 @@ public class Pagamento {
     }
 
     // Metodo para criar pagamento de Ticket
-    public static Pagamento criarPagamentoTicket(PagamentoTicketDto pagamentoTicketDto, Ticket ticket, Estacionamento estacionamento) {
-        return new Pagamento(pagamentoTicketDto, ticket, estacionamento);
+    public static Pagamento criarPagamentoTicket(PagamentoTicketDto pagamentoTicketDto, Ticket ticket, Estacionamento estacionamento, BigDecimal valorTicket) {
+        return new Pagamento(pagamentoTicketDto, ticket, estacionamento, valorTicket);
     }
 
     // Metodo para criar pagamento de Plano Mensal
